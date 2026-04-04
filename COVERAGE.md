@@ -2,36 +2,37 @@
 
 ## What Is Included
 
-- **Hedgerow regulations** from the Hedgerow Regulations 1997: removal notices, 42-day notice period, important hedgerow criteria, exemptions, cross-compliance buffer requirements, penalties
-- **Tree felling licence rules** from the Forestry Act 1967: 5 m3/quarter threshold, exemptions (fruit, garden, dangerous, TPO, planning), application process, penalties
-- **SSSI operations** from the Wildlife and Countryside Act 1981: 9 operation types requiring Natural England consent, 28-day process, conditions, penalties
-- **Public rights of way** from the Highways Act 1980 and CRoW Act 2000: footpath, bridleway, restricted byway, BOAT minimum widths, reinstatement deadlines, cropping rules, obstruction liability
-- **Common land** from the Commons Act 2006: fencing, building, vehicles, public access, agricultural works consent requirements
-- **Woodland planting guidance** from Forestry Commission EWCO: broadleaf and conifer grant rates, EIA screening thresholds, ancient woodland buffers, agroforestry, riparian, community woodland
+- **Houtopstand rules** from the Wet natuurbescherming art. 4.2-4.6: meldingsplicht kap (>10 are buiten bebouwde kom), herplantplicht, uitzonderingen (fruitbomen, kwekerij, dunning), boetes, provinciale handhaving
+- **Kapvergunning** from gemeentelijke APV: vergunningplicht binnen bebouwde kom, stamdiameter-drempels, monumentale bomen bescherming, noodkap regeling
+- **Natura 2000 vergunningen** under Wnb art. 2.7: vergunningplicht activiteiten met significant effect, AERIUS stikstofdepositie berekening, passende beoordeling, beheerplannen, soortenbescherming
+- **Openbare paden**: klompenpaden (recreatief over boerenland), LAW-routes, openbaar voetpad, fietspad, jaagpad, ruiterpad, afsluitingsregels
+- **Pachtrecht** from RVO Pachtbeleid: reguliere pacht, geliberaliseerde pacht, teeltpacht, erfpacht, pachtnormen per regio (14 pachtprijsgebieden), Grondkamer procedures
+- **Bosaanleg guidance** from Nationale Bossenstrategie / Staatsbosbeheer: provinciale subsidies, soortenkeuze inheems, LULUCF-compensatie, agroforestry, oeverbegroeiing
 
 ## Jurisdictions
 
 | Code | Country | Status |
 |------|---------|--------|
-| GB | Great Britain | Supported |
+| NL | Netherlands | Supported |
 
 ## What Is NOT Included
 
-- **Devolved administration specifics** -- Scotland (Scottish Forestry) and Wales (NRW) have separate arrangements for some of these topics
-- **Northern Ireland** -- separate legislation (no Hedgerow Regulations equivalent)
-- **Tree Preservation Orders** -- mentioned as a felling exemption, but TPO-specific rules are a local authority matter
-- **Planning permission** -- referenced where relevant, but planning law itself is not covered
-- **Environmental permits** -- pollution, waste, and water abstraction licences are separate regimes
-- **Countryside Stewardship scheme details** -- only EWCO woodland creation rates are included
-- **SFI payment rates** -- agroforestry options referenced but rates not included
-- **Ancient woodland inventory** -- the 15m buffer rule is included, but mapping of ancient woodland sites is not
+- **Provinciale verordeningen** -- each of the 12 provinces may have additional rules on houtopstanden and natuur
+- **Gemeentelijke bomenverordeningen** -- APV rules vary per municipality (393 gemeenten)
+- **Omgevingswet specifics** -- referenced where relevant, but the full new Omgevingswet (per 2024) regime is not covered
+- **Waterwet details** -- only jaagpad/watergang access is covered, not the full water permit regime
+- **Meststoffenwet** -- referenced for Natura 2000 bemesting, but the full mest/nitrogen regime is separate
+- **Subsidie details per provincie** -- approximate ranges given, but each province has different rates and conditions
+- **Bestemmingsplan specifics** -- referenced for tree protection, but zoning law itself is not covered
+- **Wildschade** -- faunaschade (wildschaderegeling) is a separate domain
 
 ## Known Gaps
 
-1. Grant rates change annually -- current data reflects 2025-2026 EWCO rates
-2. SSSI operations lists are site-specific -- the data shows common operations, but each SSSI notification lists the specific operations requiring consent for that site
-3. Cross-compliance rules are being replaced by delinked payments -- GAEC references may become outdated
-4. Local planning authority variations are not captured -- hedgerow retention decisions vary by LPA
+1. Subsidie rates change annually -- current data reflects 2025-2026 provincial averages
+2. Pachtnormen are updated annually by ministerial decree -- data reflects 2026 norms
+3. Stikstofbeleid is evolving rapidly -- AERIUS thresholds and salderingsregels may change with new legislation
+4. Natura 2000 beheerplannen are site-specific -- data shows common operations, but each area has specific rules
+5. Gemeentelijke kapvergunning rules vary significantly between municipalities
 
 ## Data Freshness
 

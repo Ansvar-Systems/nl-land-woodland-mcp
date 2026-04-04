@@ -8,17 +8,17 @@ export interface Meta {
 }
 
 const DISCLAIMER =
-  'This server provides general guidance on UK land and woodland management regulations. ' +
-  'Requirements vary by local planning authority, devolved administration, and site-specific ' +
-  'designations (SSSI, conservation area, TPO, etc.). Always consult your local planning ' +
-  'authority, Natural England, or Forestry Commission for site-specific requirements.';
+  'This server provides general guidance on Dutch land and woodland management regulations. ' +
+  'Requirements vary by gemeente (municipality), provincie, and site-specific designations ' +
+  '(Natura 2000, monumentale bomen, etc.). Always consult your gemeente, provincie, or ' +
+  'RVO for site-specific requirements.';
 
 export function buildMeta(overrides?: Partial<Meta>): Meta {
   return {
     disclaimer: DISCLAIMER,
     data_age: overrides?.data_age ?? 'unknown',
-    source_url: overrides?.source_url ?? 'https://www.legislation.gov.uk',
-    copyright: 'Data: Crown Copyright. Server: Apache-2.0 Ansvar Systems.',
+    source_url: overrides?.source_url ?? 'https://wetten.overheid.nl',
+    copyright: 'Data: Dutch Government Open Data. Server: Apache-2.0 Ansvar Systems.',
     server: 'nl-land-woodland-mcp',
     version: '0.1.0',
     ...overrides,

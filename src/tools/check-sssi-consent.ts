@@ -48,7 +48,7 @@ export function handleCheckSSSIConsent(db: Database, args: SSSIArgs) {
         typical_conditions: r.typical_conditions,
         penalties: r.penalties,
       })),
-      _meta: buildMeta({ source_url: 'https://www.legislation.gov.uk/ukpga/1981/69/contents' }),
+      _meta: buildMeta({ source_url: 'https://www.natura2000.nl' }),
     };
   }
 
@@ -63,6 +63,6 @@ export function handleCheckSSSIConsent(db: Database, args: SSSIArgs) {
       typical_conditions: r.typical_conditions,
       penalties: r.penalties,
     })),
-    _meta: buildMeta({ source_url: 'https://www.legislation.gov.uk/ukpga/1981/69/contents' }),
+    _meta: buildMeta({ source_url: 'https://www.natura2000.nl' }),
   };
 }

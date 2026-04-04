@@ -52,7 +52,7 @@ export function handleCheckHedgerowRules(db: Database, args: HedgerowArgs) {
         penalties: r.penalties,
         regulation_ref: r.regulation_ref,
       })),
-      _meta: buildMeta({ source_url: 'https://www.legislation.gov.uk/uksi/1997/1160/contents/made' }),
+      _meta: buildMeta({ source_url: 'https://wetten.overheid.nl/BWBR0037552' }),
     };
   }
 
@@ -69,6 +69,6 @@ export function handleCheckHedgerowRules(db: Database, args: HedgerowArgs) {
       penalties: r.penalties,
       regulation_ref: r.regulation_ref,
     })),
-    _meta: buildMeta({ source_url: 'https://www.legislation.gov.uk/uksi/1997/1160/contents/made' }),
+    _meta: buildMeta({ source_url: 'https://wetten.overheid.nl/BWBR0037552' }),
   };
 }

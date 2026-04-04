@@ -42,7 +42,7 @@ export function handleGetPlantingGuidance(db: Database, args: PlantingArgs) {
   // Add EIA flag if area is provided
   let eia_note: string | null = null;
   if (args.area_ha !== undefined && args.area_ha > 5) {
-    eia_note = `At ${args.area_ha} ha, Environmental Impact Assessment screening is likely required under the EIA (Forestry) Regulations 1999, especially on semi-natural habitat or sensitive areas.`;
+    eia_note = `Bij ${args.area_ha} ha is een milieueffectrapportage (MER) beoordeling waarschijnlijk nodig, vooral bij aanplant op halfnatuurlijke habitats of nabij Natura 2000-gebieden.`;
   }
 
   return {
@@ -62,6 +62,6 @@ export function handleGetPlantingGuidance(db: Database, args: PlantingArgs) {
       grant_available: g.grant_available,
       ancient_woodland_buffer_m: g.ancient_woodland_buffer_m,
     })),
-    _meta: buildMeta({ source_url: 'https://www.gov.uk/guidance/england-woodland-creation-offer' }),
+    _meta: buildMeta({ source_url: 'https://www.rijksoverheid.nl/onderwerpen/natuur-en-biodiversiteit/bossenstrategie' }),
   };
 }

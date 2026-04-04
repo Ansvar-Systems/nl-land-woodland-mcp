@@ -1,7 +1,7 @@
 {
   "name": "@ansvar/nl-land-woodland-mcp",
   "version": "0.1.0",
-  "description": "UK land and woodland management via MCP -- hedgerow regulations, felling licences, SSSI consent, rights of way",
+  "description": "Dutch land and woodland management via MCP -- kapvergunning, herplantplicht, Natura 2000, pachtrecht, openbare paden",
   "type": "module",
   "main": "dist/server.js",
   "bin": {

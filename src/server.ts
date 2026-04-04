@@ -41,13 +41,13 @@ const TOOLS = [
   },
   {
     name: 'search_land_rules',
-    description: 'Full-text search across all land and woodland management rules. Use for broad queries about hedgerows, felling, SSSI, rights of way, common land, or planting.',
+    description: 'Full-text search across all Dutch land and woodland management rules. Use for broad queries about houtopstanden, kap, Natura 2000, pachtrecht, openbare paden, or bosaanleg.',
     inputSchema: {
       type: 'object' as const,
       properties: {
         query: { type: 'string', description: 'Free-text search query' },
         topic: { type: 'string', description: 'Filter by topic (hedgerow, felling, sssi, rights_of_way, common_land, planting)' },
-        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: GB)' },
+        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: NL)' },
         limit: { type: 'number', description: 'Max results (default: 20, max: 50)' },
       },
       required: ['query'],
@@ -55,86 +55,86 @@ const TOOLS = [
   },
   {
     name: 'check_hedgerow_rules',
-    description: 'Check hedgerow regulations by action type. Returns notice requirements, exemptions, important hedgerow criteria, and penalties under the Hedgerow Regulations 1997.',
+    description: 'Check houtopstand/bomenrij regulations by action type. Returns meldingsplicht, uitzonderingen, herplantplicht, and boetes under the Wet natuurbescherming art. 4.2-4.6.',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        action: { type: 'string', description: 'Action type (e.g. remove, trim, lay, coppice, replace)' },
-        hedgerow_type: { type: 'string', description: 'Hedgerow classification (e.g. important, standard)' },
-        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: GB)' },
+        action: { type: 'string', description: 'Action type (e.g. Kappen, Snoeien, Herplant, Melding, Monumentale)' },
+        hedgerow_type: { type: 'string', description: 'Houtopstand classification' },
+        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: NL)' },
       },
       required: ['action'],
     },
   },
   {
     name: 'get_felling_licence_rules',
-    description: 'Get tree felling licence requirements by volume, area, or reason. Returns whether a licence is needed, exemptions, application process, and penalties under the Forestry Act 1967.',
+    description: 'Get kapvergunning requirements by volume, area, or reason. Returns whether a vergunning/melding is needed, exemptions, process, and strafmaat under the Wet natuurbescherming.',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        volume_m3: { type: 'number', description: 'Volume of timber to fell in cubic metres' },
-        area_ha: { type: 'number', description: 'Area of woodland in hectares' },
-        reason: { type: 'string', description: 'Reason for felling (e.g. dangerous, planning, garden, fruit)' },
-        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: GB)' },
+        volume_m3: { type: 'number', description: 'Volume of timber in cubic metres' },
+        area_ha: { type: 'number', description: 'Area of houtopstand in hectares' },
+        reason: { type: 'string', description: 'Reason for kap (e.g. Gevaarlijke, Fruit, Herplant, Dunning)' },
+        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: NL)' },
       },
     },
   },
   {
     name: 'check_sssi_consent',
-    description: 'Check whether an activity on a Site of Special Scientific Interest requires Natural England consent. Returns process, typical conditions, and penalties.',
+    description: 'Check whether an activity in or near a Natura 2000-gebied requires a Wnb vergunning. Returns process, conditions (AERIUS, KDW), and penalties.',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        activity: { type: 'string', description: 'Proposed activity (e.g. grazing, drainage, fertiliser, planting, burning, construction)' },
-        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: GB)' },
+        activity: { type: 'string', description: 'Proposed activity (e.g. Nieuwbouw, Uitbreiding, Bemesting, Grondverzet, Recreatief)' },
+        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: NL)' },
       },
       required: ['activity'],
     },
   },
   {
     name: 'get_rights_of_way_rules',
-    description: 'Get public rights of way obligations by path type and issue. Returns minimum widths, cropping rules, reinstatement deadlines, and obstruction liability.',
+    description: 'Get rules for openbare paden by path type and issue. Returns minimum widths, rules, reinstatement deadlines, and obstruction liability.',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        path_type: { type: 'string', description: 'Path type (footpath, bridleway, restricted_byway, byway)' },
-        issue: { type: 'string', description: 'Issue type (e.g. width, crops, ploughing, obstruction, gates, stiles)' },
-        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: GB)' },
+        path_type: { type: 'string', description: 'Path type (Klompenpad, LAW-route, Openbaar voetpad, Fietspad, Jaagpad, Ruiterpad)' },
+        issue: { type: 'string', description: 'Issue type (e.g. bestuursdwang, blokkade, onderhoud)' },
+        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: NL)' },
       },
     },
   },
   {
     name: 'get_common_land_rules',
-    description: 'Get rules for activities on common land. Returns consent requirements and responsible authority under the Commons Act 2006.',
+    description: 'Get pachtrecht rules for land lease in the Netherlands. Returns consent requirements and responsible authority (Grondkamer/RVO).',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        activity: { type: 'string', description: 'Proposed activity (e.g. fencing, building, vehicles)' },
-        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: GB)' },
+        activity: { type: 'string', description: 'Pacht type (e.g. Reguliere, Geliberaliseerde, Teelt, Erfpacht, Pachtnormen)' },
+        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: NL)' },
       },
     },
   },
   {
     name: 'get_planting_guidance',
-    description: 'Get woodland planting guidance including grants (EWCO), EIA screening thresholds, ancient woodland buffers, and species recommendations.',
+    description: 'Get bosaanleg guidance including provincial subsidies, Bossenstrategie targets, soortenkeuze, and LULUCF compensatie.',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        tree_type: { type: 'string', description: 'Species group (e.g. broadleaf, conifer, mixed)' },
-        purpose: { type: 'string', description: 'Planting purpose (e.g. woodland creation, agroforestry, riparian, community)' },
-        area_ha: { type: 'number', description: 'Planned planting area in hectares (triggers EIA assessment if >5ha)' },
-        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: GB)' },
+        tree_type: { type: 'string', description: 'Species group (e.g. loofhout, naaldhout, inheems, gemengd)' },
+        purpose: { type: 'string', description: 'Planting purpose (e.g. Bosaanleg, Agroforestry, Oeverbegroeiing, Natuurcompensatie)' },
+        area_ha: { type: 'number', description: 'Planned planting area in hectares (triggers EIA note if >5ha)' },
+        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: NL)' },
       },
     },
   },
   {
     name: 'get_tpo_rules',
-    description: 'Get Tree Preservation Order rules. Returns consent requirements, exemptions, process, and penalties under TCPA 1990 Part VIII.',
+    description: 'Get rules for monumentale bomen (beschermde bomen). Returns consent requirements, exemptions, process, and penalties.',
     inputSchema: {
       type: 'object' as const,
       properties: {
-        scenario: { type: 'string', description: 'Scenario (e.g. works, dead tree, conservation area, penalty)' },
-        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: GB)' },
+        scenario: { type: 'string', description: 'Scenario (e.g. Werkzaamheden, Dode, Bouw, Beschermde)' },
+        jurisdiction: { type: 'string', description: 'ISO 3166-1 alpha-2 code (default: NL)' },
       },
     },
   },

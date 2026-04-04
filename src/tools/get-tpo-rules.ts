@@ -46,6 +46,6 @@ export function handleGetTPORules(db: Database, args: TPOArgs) {
       penalties: r.penalties,
       regulation_ref: r.regulation_ref,
     })),
-    _meta: buildMeta({ source_url: 'https://www.legislation.gov.uk/ukpga/1990/8/part/VIII' }),
+    _meta: buildMeta({ source_url: 'https://lokaleregelgeving.overheid.nl' }),
   };
 }

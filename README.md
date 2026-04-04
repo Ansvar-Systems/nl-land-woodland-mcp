@@ -1,16 +1,16 @@
-# UK Land & Woodland Management MCP
+# Netherlands Land & Woodland Management MCP
 
 [![CI](https://github.com/Ansvar-Systems/nl-land-woodland-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Ansvar-Systems/nl-land-woodland-mcp/actions/workflows/ci.yml)
 [![GHCR](https://github.com/Ansvar-Systems/nl-land-woodland-mcp/actions/workflows/ghcr-build.yml/badge.svg)](https://github.com/Ansvar-Systems/nl-land-woodland-mcp/actions/workflows/ghcr-build.yml)
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-UK land and woodland management regulations via the [Model Context Protocol](https://modelcontextprotocol.io). Query hedgerow regulations, felling licences, SSSI consent, public rights of way, common land rules, and woodland planting guidance -- all from your AI assistant.
+Dutch land and woodland management regulations via the [Model Context Protocol](https://modelcontextprotocol.io). Query kapvergunning rules, herplantplicht, Natura 2000 vergunningen, pachtrecht, openbare paden, and bosaanleg guidance -- all from your AI assistant.
 
 Part of [Ansvar Open Agriculture](https://ansvar.eu/open-agriculture).
 
 ## Why This Exists
 
-Landowners, farmers, and land agents need to check regulatory requirements before managing hedgerows, felling trees, working on SSSIs, or planting woodland. These rules are spread across multiple Acts of Parliament, statutory instruments, and Forestry Commission guidance documents. This MCP server brings them together in a single queryable source.
+Landowners, farmers, and land agents in the Netherlands need to check regulatory requirements before felling trees (houtopstanden), working near Natura 2000 areas, managing pacht agreements, or planting woodland. These rules are spread across the Wet natuurbescherming, gemeentelijke APV, RVO pachtbeleid, and provincial regulations. This MCP server brings them together in a single queryable source.
 
 ## Quick Start
 
@@ -21,7 +21,7 @@ Add to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "uk-land-woodland": {
+    "nl-land-woodland": {
       "command": "npx",
       "args": ["-y", "@ansvar/nl-land-woodland-mcp"]
     }
@@ -32,7 +32,7 @@ Add to `claude_desktop_config.json`:
 ### Claude Code
 
 ```bash
-claude mcp add uk-land-woodland npx @ansvar/nl-land-woodland-mcp
+claude mcp add nl-land-woodland npx @ansvar/nl-land-woodland-mcp
 ```
 
 ### Streamable HTTP (remote)
@@ -57,21 +57,21 @@ npx @ansvar/nl-land-woodland-mcp
 
 Ask your AI assistant:
 
-- "Do I need permission to remove a hedgerow?"
-- "How much timber can I fell without a licence?"
-- "What consent do I need to fertilise an SSSI?"
-- "What is the minimum width for a public footpath?"
-- "Can I put a fence on common land?"
-- "What grants are available for broadleaf woodland planting?"
+- "Moet ik een kapvergunning aanvragen voor het kappen van bomen?"
+- "Wat is de herplantplicht na het vellen van een houtopstand?"
+- "Heb ik een Natura 2000-vergunning nodig voor uitbreiding van mijn veestapel?"
+- "Wat zijn de pachtnormen per regio in Nederland?"
+- "Wat zijn de regels voor klompenpaden?"
+- "Welke subsidies zijn er voor bosaanleg?"
 
 ## Stats
 
 | Metric | Value |
 |--------|-------|
-| Tools | 10 (3 meta + 7 domain) |
-| Jurisdiction | GB |
-| Data sources | Hedgerow Regs 1997, Forestry Act 1967, Wildlife & Countryside Act 1981, CRoW Act 2000, Commons Act 2006, EWCO Guidance |
-| License (data) | Open Government Licence v3 |
+| Tools | 11 (3 meta + 8 domain) |
+| Jurisdiction | NL |
+| Data sources | Wet natuurbescherming, APV, Natura 2000, RVO Pachtbeleid, Kadaster, Staatsbosbeheer, AERIUS, Wandelnet |
+| License (data) | Dutch Government Open Data |
 | License (code) | Apache-2.0 |
 | Transport | stdio + Streamable HTTP |
 
@@ -83,12 +83,13 @@ Ask your AI assistant:
 | `list_sources` | Data sources with freshness info |
 | `check_data_freshness` | Staleness status and refresh command |
 | `search_land_rules` | FTS5 search across all land/woodland rules |
-| `check_hedgerow_rules` | Hedgerow removal notices, exemptions, penalties |
-| `get_felling_licence_rules` | Felling licence thresholds, exemptions, process |
-| `check_sssi_consent` | SSSI operations requiring Natural England consent |
-| `get_rights_of_way_rules` | Path widths, reinstatement deadlines, obstruction |
-| `get_common_land_rules` | Common land consent requirements |
-| `get_planting_guidance` | EWCO grants, EIA thresholds, ancient woodland buffers |
+| `check_hedgerow_rules` | Houtopstand rules: meldingsplicht, herplantplicht, APV kapvergunning |
+| `get_felling_licence_rules` | Kapvergunning thresholds, exemptions, strafmaat |
+| `check_sssi_consent` | Natura 2000 vergunningplicht, AERIUS, stikstofdepositie |
+| `get_rights_of_way_rules` | Openbare paden: klompenpaden, LAW-routes, jaagpaden |
+| `get_common_land_rules` | Pachtrecht: reguliere pacht, geliberaliseerde pacht, erfpacht |
+| `get_planting_guidance` | Bosaanleg subsidies, Bossenstrategie, soortenkeuze |
+| `get_tpo_rules` | Monumentale bomen bescherming, bomenverordening |
 
 See [TOOLS.md](TOOLS.md) for full parameter documentation.
 
@@ -105,7 +106,7 @@ See [SECURITY.md](SECURITY.md) for reporting policy.
 
 ## Disclaimer
 
-This tool provides reference data for informational purposes only. It is not professional legal or land management advice. Requirements vary by local planning authority and site-specific designations. See [DISCLAIMER.md](DISCLAIMER.md).
+This tool provides reference data for informational purposes only. It is not professional legal or land management advice. Requirements vary by gemeente, provincie, and site-specific designations. See [DISCLAIMER.md](DISCLAIMER.md).
 
 ## Contributing
 
@@ -113,4 +114,4 @@ Issues and pull requests welcome. For security vulnerabilities, email security@a
 
 ## License
 
-Apache-2.0. Data sourced under Open Government Licence v3.
+Apache-2.0. Data sourced under Dutch Government Open Data licence.

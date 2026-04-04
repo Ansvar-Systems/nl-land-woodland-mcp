@@ -67,6 +67,6 @@ export function handleGetFellingLicenceRules(db: Database, args: FellingArgs) {
       penalties: r.penalties,
       regulation_ref: r.regulation_ref,
     })),
-    _meta: buildMeta({ source_url: 'https://www.legislation.gov.uk/ukpga/1967/10/contents' }),
+    _meta: buildMeta({ source_url: 'https://wetten.overheid.nl/BWBR0037552' }),
   };
 }

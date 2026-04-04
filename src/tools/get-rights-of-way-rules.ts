@@ -53,6 +53,6 @@ export function handleGetRightsOfWayRules(db: Database, args: RoWArgs) {
       reinstatement_deadline: r.reinstatement_deadline,
       obstruction_liability: r.obstruction_liability,
     })),
-    _meta: buildMeta({ source_url: 'https://www.legislation.gov.uk/ukpga/1980/66/contents' }),
+    _meta: buildMeta({ source_url: 'https://wetten.overheid.nl/BWBR0001948' }),
   };
 }

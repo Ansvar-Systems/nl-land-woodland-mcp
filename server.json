@@ -1,16 +1,16 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
-  "name": "io.github.Ansvar-Systems/uk-land-woodland",
-  "description": "UK land and woodland management \u2014 hedgerow regs, felling licences, SSSI, rights of way",
+  "name": "io.github.Ansvar-Systems/nl-land-woodland",
+  "description": "Dutch land and woodland management -- kapvergunning, herplantplicht, Natura 2000, pachtrecht",
   "repository": {
-    "url": "https://github.com/Ansvar-Systems/uk-land-woodland-mcp",
+    "url": "https://github.com/Ansvar-Systems/nl-land-woodland-mcp",
     "source": "github"
   },
   "version": "0.1.0",
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://mcp.ansvar.eu/uk-land-woodland/mcp"
+      "url": "https://mcp.ansvar.eu/nl-land-woodland/mcp"
     }
   ]
 }

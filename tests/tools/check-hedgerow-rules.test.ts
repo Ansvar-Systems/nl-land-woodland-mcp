@@ -18,20 +18,20 @@ describe('check_hedgerow_rules tool', () => {
     if (existsSync(TEST_DB)) unlinkSync(TEST_DB);
   });
 
-  test('returns rules for remove action', () => {
-    const result = handleCheckHedgerowRules(db, { action: 'remove' });
+  test('returns rules for kappen action', () => {
+    const result = handleCheckHedgerowRules(db, { action: 'Kappen' });
     const typed = result as { results_count: number; results: { action: string; notice_required: boolean }[] };
     expect(typed.results_count).toBeGreaterThan(0);
-    // At least one removal rule requires notice
+    // Kap requires notice (meldingsplicht)
     const noticeRequired = typed.results.some(r => r.notice_required === true);
     expect(noticeRequired).toBe(true);
   });
 
-  test('returns rules for trim action', () => {
-    const result = handleCheckHedgerowRules(db, { action: 'trim' });
+  test('returns rules for snoeien action', () => {
+    const result = handleCheckHedgerowRules(db, { action: 'Snoeien' });
     const typed = result as { results: { notice_required: boolean }[] };
     expect(typed.results.length).toBeGreaterThan(0);
-    // Trimming does not require notice
+    // Snoeien does not require notice
     expect(typed.results[0].notice_required).toBe(false);
   });
 
@@ -43,14 +43,14 @@ describe('check_hedgerow_rules tool', () => {
   });
 
   test('rejects unsupported jurisdiction', () => {
-    const result = handleCheckHedgerowRules(db, { action: 'remove', jurisdiction: 'SE' });
+    const result = handleCheckHedgerowRules(db, { action: 'Kappen', jurisdiction: 'SE' });
     expect(result).toHaveProperty('error', 'jurisdiction_not_supported');
   });
 
   test('penalty data is present', () => {
-    const result = handleCheckHedgerowRules(db, { action: 'remove' });
+    const result = handleCheckHedgerowRules(db, { action: 'Kappen' });
     const typed = result as { results: { penalties: string }[] };
-    const withPenalty = typed.results.filter(r => r.penalties && r.penalties.includes('25,000'));
+    const withPenalty = typed.results.filter(r => r.penalties && r.penalties.includes('25.000'));
     expect(withPenalty.length).toBeGreaterThan(0);
   });
 });

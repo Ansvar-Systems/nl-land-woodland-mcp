@@ -3,204 +3,592 @@ import { createDatabase, type Database } from '../../src/db.js';
 export function createSeededDatabase(dbPath: string): Database {
   const db = createDatabase(dbPath);
 
-  // --- Hedgerow Rules ---
+  // --- Hedgerow / Houtopstand Rules ---
   const hedgerowData: [string, number, string | null, string | null, string | null, string | null, string][] = [
-    ['Remove hedgerow', 1, 'Under 20m for new field access gate; making opening required by planning permission; required by DEFRA for plant health', 'Assessed under Schedule 1 of Hedgerow Regulations 1997: over 30 years old and meets wildlife, historical, or landscape criteria', 'Up to 25,000 GBP fine for unlawful removal plus remediation order requiring replanting', 'Hedgerow Regulations 1997 s.2-s.5', 'GB'],
-    ['Remove hedgerow (important)', 1, 'Planning permission for development; DEFRA plant health order', 'Over 30 years old plus meets at least one Schedule 1 criterion: supports protected species, recorded in parish boundary records, includes archaeological features, or marks a pre-1850 boundary', 'Up to 25,000 GBP fine plus remediation order', 'Hedgerow Regulations 1997 Schedule 1', 'GB'],
-    ['Remove hedgerow (notice)', 1, '42-day notice to local planning authority required before removal. LPA may issue hedgerow retention notice within 42 days if hedgerow is important.', null, 'Removal without notice: up to 25,000 GBP fine', 'Hedgerow Regulations 1997 s.2', 'GB'],
-    ['Trim hedgerow', 0, null, null, 'Cross-compliance breach if trimmed during bird nesting season (1 March to 31 August) under GAEC 7a', 'Cross-compliance GAEC 7a', 'GB'],
-    ['Lay hedgerow', 0, 'Traditional management practice; no notice needed. Best done October to March.', null, null, 'Good practice guidance', 'GB'],
-    ['Coppice hedgerow', 0, 'Traditional management practice; no notice needed.', null, null, 'Good practice guidance', 'GB'],
-    ['Replace hedgerow', 0, 'If removed with permission, replacement planting may be conditioned by local planning authority', null, null, 'Hedgerow Regulations 1997 s.5', 'GB'],
-    ['Hedgerow buffer width', 0, 'Cross-compliance requires 2m buffer strip from centre of hedge. Cannot cultivate or apply pesticides/fertiliser within buffer.', null, 'Cross-compliance breach penalties apply', 'Cross-compliance GAEC 7a', 'GB'],
-    ['Important Hedgerow Schedule 1 criteria', 1, null, 'A hedgerow is classified as important under Schedule 1 of the Hedgerow Regulations 1997 if it is at least 30 years old AND meets at least one of: (a) marks a pre-1850 parish or township boundary, (b) contains a protected species listed in Schedule 5 of the Wildlife and Countryside Act 1981 or Schedule 8 (plants), (c) contains 7 or more woody species in a 30-metre section (6 in northern England), (d) has associated features such as a bank, ditch, wall or mature standard trees AND at least 4 woody species per 30m, (e) is part of a pre-1845 field system visible on tithe or enclosure maps.', 'LPA hedgerow retention notice if criteria met. Up to 25,000 GBP fine for unlawful removal plus replanting order.', 'Hedgerow Regulations 1997 Schedule 1', 'GB'],
-    ['Hedgerow planting grants', 0, 'Countryside Stewardship option HB1: planting new hedgerow. Grant rate approximately 11.60 GBP per metre. Additional supplements for species-rich hedges and associated features (bank, ditch). ELS/HLS closed to new applicants; CS is current scheme.', null, null, 'Countryside Stewardship HB1', 'GB'],
-    ['Species-rich hedge definition', 0, 'A species-rich hedgerow contains 5 or more native woody species per 30-metre section. Native species include hawthorn, blackthorn, hazel, field maple, dogwood, spindle, guelder rose, dog rose, holly, oak, ash, elm, wild privet. Counted during dormant season by woody stem identification. The 7-species threshold applies specifically to the Important Hedgerow criteria under Schedule 1.', null, null, 'Hedgerow Regulations 1997 Schedule 1; Countryside Stewardship guidance', 'GB'],
-    ['Hedge cutting timing restriction', 0, null, null, 'Cross-compliance breach if hedgerows are cut or trimmed between 1 March and 31 August (bird nesting season). Breach of GAEC 7a results in Basic Payment Scheme penalties (1-5% reduction for negligence, up to 100% for intentional). Exemption: roadside hedges for highway safety may be cut at any time.', 'Cross-compliance GAEC 7a; The Standards for Good Agricultural and Environmental Condition and Statutory Management Requirements (England) Regulations', 'GB'],
-    ['Devon hedgebanks', 0, 'Devon hedgebanks are earth and stone structures (not planted hedges) with vegetation on top. Traditional heritage management involves periodic face-trimming and bank repair. Removal requires same notice under Hedgerow Regulations 1997. Stewardship of Earth Bank option under CS. Distinct from planted hedgerows -- management technique involves stone facing repair and re-turfing, not laying or coppicing.', null, null, 'Hedgerow Regulations 1997; Devon County Council hedgebank guidance', 'GB'],
+    [
+      'Kappen houtopstand (>10 are buiten bebouwde kom)',
+      1,
+      'Fruitbomen en notenbomen, windschermen langs landbouwgronden, kwekerij-beplanting, dunning tot 20% van de stammen, bomen op erven',
+      'Houtopstand groter dan 10 are (1.000 m2) of bomenrij van 20 of meer bomen buiten de bebouwde kom',
+      'Bestuurlijke boete tot 25.000 EUR. Bestuursdwang: gemeente of provincie kan herplant afdwingen.',
+      'Wet natuurbescherming art. 4.2',
+      'NL',
+    ],
+    [
+      'Herplantplicht na kap',
+      1,
+      'Geen ontheffing tenzij aangevraagd bij provincie; ontheffing bij zwaarwegend maatschappelijk belang',
+      'Herplantplicht geldt voor elke gevelde houtopstand waarvoor meldingsplicht geldt. Herbeplanting op zelfde grond of op andere grond binnen de provincie. Zelfde oppervlakte als gevelde houtopstand.',
+      'Bij niet-nakoming herplantplicht: bestuursdwang en dwangsom door provincie',
+      'Wet natuurbescherming art. 4.3',
+      'NL',
+    ],
+    [
+      'Melding kap bij provincie',
+      1,
+      'Uitzondering als kap valt onder gemeentelijke APV (binnen bebouwde kom)',
+      'Melding tenminste 1 maand (4 weken) voor de geplande kap bij de provincie. Na melding geldt een wachttijd van 1 maand voordat gekapt mag worden.',
+      'Kappen zonder melding: bestuurlijke boete en herplantplicht',
+      'Wet natuurbescherming art. 4.2 lid 1',
+      'NL',
+    ],
+    [
+      'Kapvergunning binnen bebouwde kom (APV)',
+      1,
+      'Per gemeente verschillend: soms vrijstelling voor bepaalde soorten, stamdiameter, of erfbeplanting',
+      'Binnen de bebouwde kom regelt de gemeente de kapvergunning via de Algemene Plaatselijke Verordening (APV). Regels variëren per gemeente.',
+      'Boete per gemeente, veelal bestuursdwang en herplantplicht',
+      'Gemeentelijke APV (Algemene Plaatselijke Verordening)',
+      'NL',
+    ],
+    [
+      'Snoeien houtopstand',
+      0,
+      null,
+      null,
+      'Geen boete mits geen beschermde soorten worden verstoord (check Wet natuurbescherming art. 3.1-3.5 voor soortenbescherming)',
+      'Wet natuurbescherming art. 3.1-3.5 (soortenbescherming)',
+      'NL',
+    ],
+    [
+      'Monumentale bomen',
+      1,
+      'Alleen kap bij direct gevaar voor personen of gebouwen, met voorafgaande toestemming gemeente',
+      'Gemeentelijke monumentale-bomenlijst. Bomen met bijzondere cultuurhistorische, wetenschappelijke of beeldbepalende waarde. Bescherming via APV of bestemmingsplan.',
+      'Boete tot 25.000 EUR plus herplantplicht. Gemeente kan bestuursdwang opleggen.',
+      'Gemeentelijke APV; Erfgoedwet (indirect)',
+      'NL',
+    ],
+    [
+      'Bomenrij onder 20 bomen',
+      0,
+      'Geen meldingsplicht onder Wet natuurbescherming, maar check altijd de gemeentelijke APV — veel gemeenten hanteren een lagere drempel',
+      null,
+      'Geen boete onder Wnb. APV-boete kan wel van toepassing zijn.',
+      'Wet natuurbescherming art. 4.2 lid 2',
+      'NL',
+    ],
+    [
+      'Dunning (minder dan 20%)',
+      0,
+      'Dunning van minder dan 20% van de stammen in een houtopstand is uitgezonderd van de meldingsplicht',
+      null,
+      null,
+      'Wet natuurbescherming art. 4.2 lid 3',
+      'NL',
+    ],
+    [
+      'Verwijderen houtwal of houtsingel',
+      1,
+      'Uitzondering als kleiner dan 10 are en minder dan 20 bomen',
+      'Houtwallen en houtsingels (lijnvormige beplanting) vallen onder de bescherming als ze groter zijn dan 10 are of 20+ bomen bevatten. Ecologisch waardevolle landschapselementen.',
+      'Bestuurlijke boete tot 25.000 EUR plus herplantplicht',
+      'Wet natuurbescherming art. 4.2; provinciale verordening',
+      'NL',
+    ],
   ];
 
   for (const [action, notice, exemptions, criteria, penalties, ref, jur] of hedgerowData) {
     db.run(
       `INSERT INTO hedgerow_rules (action, notice_required, exemptions, important_hedgerow_criteria, penalties, regulation_ref, jurisdiction)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [action, notice, exemptions, criteria, penalties, ref, jur]
+      [action, notice, exemptions, criteria, penalties, ref, jur],
     );
   }
 
   // --- Felling Rules ---
   const fellingData: [string, number, number | null, number | null, string | null, string | null, string | null, string | null, string][] = [
-    ['Standard felling', 1, 5, null, null, 'Apply to Forestry Commission. 8-week determination period. Replanting conditions normally attached. Licence valid for up to 5 years.', 'Up to 2,500 GBP or twice the value of the trees, whichever is greater', 'Forestry Act 1967 s.9', 'GB'],
-    ['Small exemption (no licence)', 0, 5, null, 'Up to 5 cubic metres per calendar quarter without licence. Maximum 2 cubic metres may be sold.', null, null, 'Forestry Act 1967 s.9(2)', 'GB'],
-    ['TPO trees', 1, null, null, 'Separate consent from local planning authority, not Forestry Commission. TPO makes it an offence to cut down, top, lop, uproot, wilfully damage or destroy a protected tree.', 'Apply to local planning authority under Town and Country Planning Act 1990.', 'Unlimited fine in Crown Court', 'Town and Country Planning Act 1990 s.210', 'GB'],
-    ['Planning permission trees', 0, null, null, 'Trees covered by an existing planning consent do not need a separate felling licence.', null, null, 'Forestry Act 1967 s.9(4)(a)', 'GB'],
-    ['Dangerous trees (emergency)', 0, null, null, 'Emergency felling exempt from licence. Must notify Forestry Commission within 5 working days. Replanting obligation still applies.', null, null, 'Forestry Act 1967 s.9(4)(b)', 'GB'],
-    ['Fruit trees', 0, null, null, 'Orchard and fruit trees exempt from felling licence requirements.', null, null, 'Forestry Act 1967 s.9(3)', 'GB'],
-    ['Garden trees (under 0.1ha)', 0, null, 0.1, 'Trees in a garden under 0.1 hectares are exempt from felling licence.', null, null, 'Forestry Act 1967 s.9(2)', 'GB'],
-    ['Approved development', 0, null, null, 'Felling required to carry out development authorised by planning permission is exempt.', null, null, 'Forestry Act 1967 s.9(4)(a)', 'GB'],
-    ['Felling application process', 1, null, null, null, 'Apply online via Forestry Commission portal or Form FC1. Include species, volume, area, map. 8-week statutory determination period. Conditions typically include replanting within 2 years with specified species.', null, 'Forestry Act 1967 s.10', 'GB'],
-    ['Felling penalties', 1, null, null, null, null, 'Up to 2,500 GBP per offence or twice value of trees (whichever greater). Court may also order replanting.', 'Forestry Act 1967 s.17', 'GB'],
-    ['Restocking conditions', 1, null, null, 'Most felling licences include restocking conditions requiring replanting within 2 planting seasons (by end of March in the second year after felling). Conditions specify species, density (typically 2,500 stems/ha for broadleaf, 2,500-3,000 for conifer), and minimum establishment rate. Failure to restock: Forestry Commission may serve a restocking notice and ultimately carry out the work and recover costs.', 'Apply to FC for variation if restocking conditions are impractical. Natural regeneration may be accepted as an alternative if approved.', 'Failure to comply with restocking conditions: up to 2,500 GBP fine plus FC may restock at landowner cost', 'Forestry Act 1967 s.12, s.17A', 'GB'],
-    ['Ash dieback felling exemption (Chalara)', 0, null, null, 'Ash trees affected by Chalara (Hymenoscyphus fraxineus) may be felled without a licence if the tree is dead, dying, or dangerous as a result of the disease. Must still notify the Forestry Commission within 5 working days of felling. Standard restocking conditions still apply. Statutory Plant Health Notice may also require felling -- this overrides the need for a felling licence.', null, null, 'Forestry Act 1967 s.9(4)(b); Plant Health (Forestry) Order 2005', 'GB'],
-    ['Veteran and ancient trees', 0, null, null, 'Veteran and ancient trees have no automatic statutory protection (unlike TPOs). However, they carry strong weight in the planning system under the NPPF (National Planning Policy Framework para 180c): "development resulting in the loss or deterioration of irreplaceable habitats (such as ancient woodland and ancient or veteran trees) should be refused, unless there are wholly exceptional reasons and a suitable compensation strategy." The Ancient Tree Inventory (maintained by the Woodland Trust) records known ancient and veteran trees but listing is not a legal protection.', null, null, 'NPPF paragraph 180c; Forestry Commission practice guide on ancient and veteran trees', 'GB'],
-    ['High hedges (evergreen)', 0, null, null, 'Evergreen hedges over 2 metres tall that affect a neighbour may be subject to a complaint under Part 8 of the Anti-social Behaviour Act 2003. This is a planning/neighbour dispute mechanism, NOT the Hedgerow Regulations 1997. The local authority may issue a remedial notice requiring the hedge owner to reduce the height. Appeals to the Planning Inspectorate. Does not apply to deciduous hedges, single trees, or hedges between fields (only domestic/garden boundaries).', 'Affected neighbour complains to local authority (fee applies, typically 300-500 GBP). Council assesses and may issue notice.', 'Failure to comply with remedial notice: local authority may enter land to reduce hedge and recover costs, or prosecution.', 'Anti-social Behaviour Act 2003 Part 8', 'GB'],
-    ['Woodland management plan (FC approved)', 1, null, null, 'A 10-year woodland management plan approved by the Forestry Commission provides a framework for ongoing felling and restocking without needing individual felling licence applications. The plan must cover objectives, inventory, thinning schedule, felling coupes, restocking species, environmental considerations (protected species, ancient woodland), and public access. Plans are required for EWCO and CS woodland options. FC-approved plans also satisfy the UK Forestry Standard (UKFS) sustainable management requirements.', 'Submit to Forestry Commission local woodland officer. Approval typically 8-12 weeks. 10-year validity with 5-year review.', null, 'Forestry Act 1967 s.9; UK Forestry Standard', 'GB'],
+    [
+      'Standaard kap buiten bebouwde kom',
+      1,
+      null,
+      0.1,
+      null,
+      'Melding bij provincie (Wet natuurbescherming art. 4.2). Minimaal 1 maand wachttijd na melding. Herplantplicht binnen 3 jaar.',
+      'Bestuurlijke boete tot 21.750 EUR. Bestuursdwang: provincie kan herplant afdwingen.',
+      'Wet natuurbescherming art. 4.2-4.6',
+      'NL',
+    ],
+    [
+      'Kap binnen bebouwde kom (APV)',
+      1,
+      null,
+      null,
+      'Regels per gemeente: stamdiameter-drempels (vaak >15 cm op 1,3 m hoogte), soortvrijstellingen, erfbeplanting',
+      'Kapvergunning aanvragen bij gemeente. Behandeltermijn 8 weken (regulier) of 26 weken (uitgebreid). Bezwaar en beroep mogelijk.',
+      'Bestuursdwang en bestuurlijke boete per gemeentelijke APV',
+      'Gemeentelijke APV',
+      'NL',
+    ],
+    [
+      'Fruitbomen en notenbomen',
+      0,
+      null,
+      null,
+      'Fruitbomen en notenbomen zijn uitgezonderd van de meldingsplicht onder de Wet natuurbescherming.',
+      null,
+      null,
+      'Wet natuurbescherming art. 4.2 lid 3',
+      'NL',
+    ],
+    [
+      'Gevaarlijke boom (noodkap)',
+      0,
+      null,
+      null,
+      'Noodkap bij direct gevaar voor personen of gebouwen. Achteraf melden bij gemeente of provincie. Herplantplicht blijft gelden.',
+      'Zo spoedig mogelijk melden na kap. Fotodocumentatie van de gevaarlijke situatie bewaren.',
+      null,
+      'Wet natuurbescherming art. 4.2; gemeentelijke APV',
+      'NL',
+    ],
+    [
+      'Dunning onder 20%',
+      0,
+      null,
+      null,
+      'Dunning van minder dan 20% van het stamtal per 10 jaar is uitgezonderd van de meldingsplicht. Geldt als regulier bosbeheer.',
+      null,
+      null,
+      'Wet natuurbescherming art. 4.2 lid 3',
+      'NL',
+    ],
+    [
+      'Kwekerij-beplanting',
+      0,
+      null,
+      null,
+      'Bomen op kwekerijen en boomgaarden (bedrijfsmatige teelt) zijn uitgezonderd van de meldingsplicht.',
+      null,
+      null,
+      'Wet natuurbescherming art. 4.2 lid 3',
+      'NL',
+    ],
+    [
+      'Windschermen langs landbouwgrond',
+      0,
+      null,
+      null,
+      'Windschermen langs landbouwgronden (niet breder dan 2 rijen) zijn uitgezonderd van de meldingsplicht onder Wnb.',
+      null,
+      null,
+      'Wet natuurbescherming art. 4.2 lid 3',
+      'NL',
+    ],
+    [
+      'Herplantplicht (algemeen)',
+      1,
+      null,
+      null,
+      null,
+      'Na kap van meldingsplichtige houtopstand: herplant binnen 3 jaar op zelfde oppervlakte. Mag op andere locatie binnen provincie mits goedgekeurd. Aanvragen ontheffing bij provincie.',
+      'Bij niet nakomen: bestuursdwang door provincie, kosten voor rekening eigenaar',
+      'Wet natuurbescherming art. 4.3',
+      'NL',
+    ],
+    [
+      'Ontheffing herplantplicht',
+      1,
+      null,
+      null,
+      'Ontheffing bij zwaarwegend maatschappelijk belang (woningbouw, infrastructuur). Compensatie in de vorm van bosaanleg elders kan worden gevraagd.',
+      'Aanvragen bij Gedeputeerde Staten van de provincie. Onderbouwing met ruimtelijke plannen of maatschappelijke noodzaak.',
+      null,
+      'Wet natuurbescherming art. 4.4',
+      'NL',
+    ],
+    [
+      'Boswet-melding wachttijd',
+      1,
+      null,
+      null,
+      null,
+      'Na melding bij provincie geldt een wachttijd van 1 maand (4 weken). Gedurende deze periode mag niet worden gekapt. Provincie kan bezwaar maken.',
+      'Kap tijdens wachttijd: bestuurlijke boete en herplantplicht',
+      'Wet natuurbescherming art. 4.2 lid 1',
+      'NL',
+    ],
+    [
+      'Strafmaat overtreding kapregels',
+      1,
+      null,
+      null,
+      null,
+      null,
+      'Maximale boete 21.750 EUR per overtreding (Wet op de economische delicten). Bij herhaling hogere straf. Bestuursdwang mogelijk.',
+      'Wet op de economische delicten; Wet natuurbescherming',
+      'NL',
+    ],
   ];
 
   for (const [scenario, lic, m3, ha, exemptions, process, penalties, ref, jur] of fellingData) {
     db.run(
       `INSERT INTO felling_rules (scenario, licence_required, threshold_m3, threshold_ha, exemptions, application_process, penalties, regulation_ref, jurisdiction)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [scenario, lic, m3, ha, exemptions, process, penalties, ref, jur]
+      [scenario, lic, m3, ha, exemptions, process, penalties, ref, jur],
     );
   }
 
-  // --- SSSI Operations ---
-  const sssiData: [string, number, string, string | null, string, string][] = [
-    ['Grazing changes', 1, 'Apply to Natural England. 28-day response period. May attach conditions on stocking rates, seasonal restrictions, or grazing methods.', 'Maximum stocking rate limits, seasonal grazing restrictions, species-specific exclusions', 'Up to 20,000 GBP (magistrates) or unlimited fine (Crown Court) plus restoration costs', 'GB'],
-    ['Drainage works', 1, 'Apply to Natural England. 28-day response. Consent rarely given for new drainage on SSSIs. Modification of existing drainage may be permitted with conditions.', 'Water level monitoring, seasonal restrictions, engineering specifications', 'Up to 20,000 GBP (magistrates) or unlimited fine (Crown Court) plus restoration', 'GB'],
-    ['Fertiliser application', 1, 'Apply to Natural England. 28-day response. Usually restricted on nutrient-sensitive habitats (chalk grassland, heathland, wetlands).', 'Application rate limits, exclusion zones around sensitive features, timing restrictions', 'Up to 20,000 GBP (magistrates) or unlimited fine (Crown Court) plus restoration', 'GB'],
-    ['Pesticide application', 1, 'Apply to Natural England. 28-day response. Consent depends on proximity to sensitive habitats and species present.', 'Product restrictions, buffer zones, timing restrictions to protect nesting/breeding', 'Up to 20,000 GBP (magistrates) or unlimited fine (Crown Court) plus restoration', 'GB'],
-    ['Planting trees or shrubs', 1, 'Apply to Natural England. 28-day response. Consent depends on existing habitat value and planting impact on SSSI features.', 'Species restrictions, planting density limits, exclusion zones around sensitive features', 'Up to 20,000 GBP (magistrates) or unlimited fine (Crown Court) plus restoration', 'GB'],
-    ['Construction (buildings, tracks, fencing)', 1, 'Apply to Natural England. 28-day response. Major construction rarely consented. Minor works (fencing for grazing management) more likely to be approved.', 'Design specifications, materials restrictions, seasonal construction windows, reinstatement conditions', 'Up to 20,000 GBP (magistrates) or unlimited fine (Crown Court) plus restoration', 'GB'],
-    ['Managed burning', 1, 'Apply to Natural England. 28-day response. Burning on SSSIs requires consent even during the legal burning season.', 'Burning rotation plans, fire break requirements, wind speed limits, exclusion zones', 'Up to 20,000 GBP (magistrates) or unlimited fine (Crown Court) plus restoration', 'GB'],
-    ['Mineral or soil extraction', 1, 'Apply to Natural England. 28-day response. Extraction on SSSIs is strongly resisted. Planning permission also required.', 'Volume limits, phased extraction, restoration plans, monitoring requirements', 'Up to 20,000 GBP (magistrates) or unlimited fine (Crown Court) plus restoration', 'GB'],
-    ['SSSI appeal process', 1, 'If Natural England refuses consent or attaches unacceptable conditions, appeal to the Secretary of State. Alternatively, apply to do the operation and if refused, may claim compensation for financial loss.', null, null, 'GB'],
-    ['Nutrient enrichment from adjacent farmland', 0, 'Landowner of SSSI is liable for damage caused by nutrient enrichment (nitrogen, phosphorus) from adjacent farmland, even if the nutrients originate from a neighbouring farm. Natural England may serve a management notice requiring remedial action. The Water Environment (Water Framework Directive) Regulations 2017 and Reduction and Prevention of Agricultural Diffuse Pollution Regulations 2018 also apply to nutrient runoff affecting SSSIs.', 'Buffer zones, reduced application rates on fields draining to SSSI, cover crops, sediment traps', 'Up to 20,000 GBP (magistrates) or unlimited fine (Crown Court) for SSSI damage. Separate liability under diffuse pollution regulations.', 'GB'],
-    ['Undergrazing as damaging operation', 1, 'Natural England may prescribe minimum stocking levels or grazing regimes where undergrazing is damaging the SSSI interest features. Lack of grazing on grassland SSSIs leads to scrub encroachment, loss of species diversity, and degradation of the notified features. NE can enter into management agreements (with payments) or ultimately serve management notices requiring grazing.', 'Minimum stocking density, seasonal grazing requirements, species-specific grazing (cattle vs sheep), scrub clearance prescriptions', 'Failure to comply with management notice: up to 20,000 GBP (magistrates) or unlimited fine (Crown Court)', 'GB'],
-    ['SSSI management agreement compensation', 0, 'If Natural England refuses consent for a listed operation that would otherwise be profitable, the landowner may claim compensation under section 28M of the Wildlife and Countryside Act 1981. Compensation is based on the financial loss resulting from the refusal. Alternatively, NE may offer a management agreement with annual payments in lieu of the refused operation. Management agreements are typically for 10-25 years.', null, null, 'GB'],
-    ['Countryside Stewardship Higher Tier SSSI priority', 0, 'SSSI land receives priority scoring for Countryside Stewardship Higher Tier applications. CS Higher Tier provides annual payments for specific management prescriptions that maintain or restore SSSI features. Typical options include grassland management (GS6-GS8), heathland restoration (LH1-LH2), wetland management (WT5-WT7), and woodland management (WD1-WD2). Payments are higher than Mid Tier and reflect the additional management burden. Natural England is the delivery body and provides free SSSI-specific management advice.', null, null, 'GB'],
+  // --- Natura 2000 (SSSI equivalent) ---
+  const natura2000Data: [string, number, string, string | null, string, string][] = [
+    [
+      'Nieuwbouw stal nabij Natura 2000',
+      1,
+      'Vergunningaanvraag bij provincie (Wnb art. 2.7). AERIUS-berekening voor stikstofdepositie verplicht. Passende beoordeling als KDW (Kritische Depositie Waarde) wordt overschreden. Vergunning kan worden geweigerd bij significant negatief effect.',
+      'Maximale stikstofdepositie binnen KDW, emissiereducerende maatregelen, compensatieplan indien nodig',
+      'Bestuurlijke boete tot 21.750 EUR (economisch delict). Stillegging bouw. Dwangsom per dag overtreding.',
+      'NL',
+    ],
+    [
+      'Uitbreiding veestapel',
+      1,
+      'Vergunning vereist (Wnb art. 2.7). AERIUS-berekening voor extra stikstofdepositie. Intern salderen mogelijk (minder dieren elders). Extern salderen met andere vergunninghouder mogelijk mits 30% afroming.',
+      'Emissiereductie per dierplaats, luchtwassers, maximale depositie op Natura 2000-habitat',
+      'Bestuurlijke boete, intrekking vergunning, dwangsom',
+      'NL',
+    ],
+    [
+      'Grondverzet in of nabij Natura 2000',
+      1,
+      'Vergunning vereist als grondverzet stikstofdepositie, bodemverstoring, of hydrologisch effect veroorzaakt. AERIUS-berekening voor machinaal grondverzet. Quickscan flora en fauna verplicht.',
+      'Werkperiode buiten broedseizoen, geen werkzaamheden in natte periodes, herstelmaatregelen na afronding',
+      'Bestuurlijke boete, dwangsom, herstelplicht',
+      'NL',
+    ],
+    [
+      'Recreatief medegebruik Natura 2000',
+      1,
+      'Vergunning nodig als activiteit significante verstoring kan veroorzaken (bijv. evenementen, motorcross, kitesurfen in beschermd gebied). Voortoets of passende beoordeling afhankelijk van omvang. Beheerplan kan generieke vrijstelling geven voor extensieve recreatie (wandelen, fietsen).',
+      'Seizoensbeperkingen (broedseizoen), routegebonden recreatie, maximale bezoekersaantallen',
+      'Bestuurlijke boete, last onder dwangsom bij herhaalde overtreding',
+      'NL',
+    ],
+    [
+      'Bemesting nabij Natura 2000',
+      1,
+      'Bemesting op of nabij Natura 2000-gebieden met stikstofgevoelige habitats vereist beoordeling. Mestgebruiksnormen gelden (Meststoffenwet). Aanvullende provinciale regels mogelijk. AERIUS-berekening voor ammoniakdepositie.',
+      'Bufferzone langs Natura 2000-grens (variabel, vaak 200-250 m), emissiearme mesttoediening, maximale gebruiksnormen',
+      'Boete Meststoffenwet tot 50.000 EUR. Bestuurlijke boete Wnb tot 21.750 EUR.',
+      'NL',
+    ],
+    [
+      'Waterpeilwijziging nabij Natura 2000',
+      1,
+      'Vergunning vereist als hydrologisch effect op Natura 2000-habitat verwacht. Waterschap en provincie beoordelen gezamenlijk. Effectbeoordeling op grondwaterafhankelijke habitats (natte heide, venen, beekdalen).',
+      'Peilbesluit waterschap, monitoring grondwaterstanden, herstelmaatregelen bij schade',
+      'Bestuurlijke boete, dwangsom, herstelplicht waterschap',
+      'NL',
+    ],
+    [
+      'Beheerplannen Natura 2000',
+      0,
+      'Elke Natura 2000-gebied heeft een beheerplan (vastgesteld door provincie of Rijkswaterstaat). Het beheerplan beschrijft instandhoudingsdoelen, toegestane activiteiten, en benodigde maatregelen. Activiteiten die in het beheerplan als vrijgesteld zijn opgenomen vereisen geen aparte Wnb-vergunning.',
+      null,
+      null,
+      'NL',
+    ],
+    [
+      'AERIUS-berekening stikstofdepositie',
+      1,
+      'AERIUS Calculator is het verplichte rekenmodel voor stikstofdepositieberekeningen bij vergunningaanvragen. Berekent depositie van NOx en NH3 op Natura 2000-habitats. Resultaat in mol/ha/jaar. Bij overschrijding KDW is passende beoordeling nodig.',
+      'Depositie onder 0,005 mol/ha/jaar (afkapgrens AERIUS) wordt als verwaarloosbaar beschouwd',
+      'Vergunning geweigerd bij onvoldoende onderbouwing. Geen directe boete voor verkeerde berekening, maar illegale activiteit zonder vergunning: economisch delict.',
+      'NL',
+    ],
+    [
+      'Soortenbescherming in Natura 2000',
+      1,
+      'Naast gebiedsbescherming (Wnb art. 2.7) geldt ook soortenbescherming (Wnb art. 3.1-3.5). Verstoring van beschermde soorten (bijv. bruine kiekendief, kamsalamander, vleermuizen) vereist ontheffing. Quickscan ecologie als eerste stap.',
+      'Mitigerende maatregelen, werkprotocol beschermde soorten, ecologische begeleiding',
+      'Bestuurlijke boete tot 21.750 EUR per overtreding soortenbescherming',
+      'NL',
+    ],
+    [
+      'Stikstofregistratiesysteem (SSRS)',
+      0,
+      'Het Stikstofregistratiesysteem registreert vrijgekomen stikstofruimte door bronmaatregelen (snelheidsverlaging, warme sanering veehouderij, etc.). Beschikbare ruimte wordt toegedeeld aan prioritaire projecten (woningbouw, infrastructuur). Geen directe vergunning nodig, maar toewijzing stikstofruimte vereist goedkeuring minister.',
+      null,
+      null,
+      'NL',
+    ],
   ];
 
-  for (const [op, consent, process, conditions, penalties, jur] of sssiData) {
+  for (const [op, consent, process, conditions, penalties, jur] of natura2000Data) {
     db.run(
       `INSERT INTO sssi_operations (operation, consent_required, process, typical_conditions, penalties, jurisdiction)
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [op, consent, process, conditions, penalties, jur]
+      [op, consent, process, conditions, penalties, jur],
     );
   }
 
   // --- Rights of Way ---
   const rowData: [string, string, number, string | null, string, string, string][] = [
-    ['Footpath', 'Minimum width, reinstatement after disturbance, surface must be apparent to users', 1.0, 'Cannot grow crops on surface of cross-field path. Must make path line apparent. Field-edge paths: 1m minimum. Cross-field paths: 1.5m minimum.', 'Must reinstate within 14 days of disturbance. 24 hours for first disturbance if crop is already growing on a cross-field path.', 'Criminal offence to obstruct. Local authority has power to remove obstruction and charge landowner costs.', 'GB'],
-    ['Bridleway', 'Minimum width, reinstatement after disturbance, suitable for horse riders and cyclists', 2.0, 'Cannot grow crops on surface of cross-field path. Field-edge: 2m minimum. Cross-field: 3m minimum. Surface must be passable on horseback.', 'Must reinstate within 14 days of disturbance. 24 hours for first disturbance if crop already growing.', 'Criminal offence to obstruct. Local authority enforcement. Surface must be safe for horses.', 'GB'],
-    ['Restricted byway', 'Minimum width, no motor vehicles, suitable for walkers, horse riders, and non-motorised vehicles', 3.0, 'Cannot obstruct or narrow below minimum width. Available for walkers, horse riders, cyclists, and horse-drawn vehicles but not motor vehicles.', 'Must reinstate within 14 days of disturbance.', 'Criminal offence to obstruct. Higher enforcement priority due to broader usage rights.', 'GB'],
-    ['Byway open to all traffic (BOAT)', 'Minimum width, motor vehicles permitted, must maintain surface for all users', 5.0, 'Open to all traffic including motor vehicles. Cannot obstruct or narrow. Surface must support vehicular use.', 'Must reinstate within 14 days of disturbance.', 'Criminal offence to obstruct. Motor vehicle access means highway authority enforcement.', 'GB'],
-    ['Ploughing (cross-field paths)', 'May plough cross-field footpaths and bridleways but must reinstate', 1.5, 'Can plough cross-field paths (not field-edge). Must reinstate to minimum width within 14 days. 24 hours if path has already been ploughed once that season.', '14 days for first ploughing. 24 hours if already disturbed once in the same crop season.', 'Failure to reinstate is criminal offence. Local authority may reinstate and recover costs.', 'GB'],
-    ['Gates and stiles', 'Landowner must maintain in good repair. Gates preferred over stiles for accessibility.', 0, 'Landowner responsible for maintenance. Gate preferred over stile (Equality Act accessibility). Must not add new barriers without local authority permission. Self-closing gates acceptable.', null, 'Local authority can serve notice requiring repair. Failure to comply is offence.', 'GB'],
-    ['Crops on paths', 'Cannot inconvenience users by growing crops on path surface', 1.5, 'Cannot allow crop to grow on surface of any cross-field public right of way so as to inconvenience users. Must make path line apparent to users. Applies to all growing crops including grass re-seeds on cross-field paths.', null, 'Criminal offence. Fixed penalty notice or prosecution. Local authority may clear and recover costs.', 'GB'],
-    ['Bulls on paths', 'Restrictions on keeping bulls in fields crossed by public paths', 0, 'DAIRY BREED bulls over 10 months old are BANNED from any field or enclosure crossed by a public right of way -- this is an absolute prohibition with no exceptions. BEEF BREED bulls over 10 months old may be kept in fields crossed by public paths ONLY if accompanied by cows or heifers. Bulls under 10 months old of any breed are permitted. The breed determination is based on the bull itself, not the herd it runs with. Recognised dairy breeds include Holstein, Friesian, Ayrshire, Jersey, Guernsey, Kerry, Dairy Shorthorn.', null, 'Criminal offence. Injury or death from a bull on a public path may also result in HSE prosecution under Health and Safety at Work Act 1974, and personal injury claims. Maximum unlimited fine and/or imprisonment.', 'GB'],
-    ['Permissive paths', 'Voluntary paths with no statutory protection', 0, 'A permissive path is created by agreement or by the landowner allowing access voluntarily. It carries NO statutory protection -- the landowner may withdraw the permission at any time without notice or legal process. Permissive paths do not become public rights of way through use (provided the landowner takes reasonable steps to indicate the path is permissive, not dedicated). Common mechanisms: Natural England Higher Level Stewardship agreements (10-year permissive access), private agreements with parish councils, and voluntary dedication.', null, 'No offence to close a permissive path. However, closure of a path that has acquired public right-of-way status through 20 years uninterrupted use requires legal order.', 'GB'],
-    ['Electric fences crossing paths', 'Must be signed and safe where crossing public rights of way', 0, 'Electric fences crossing public rights of way must have a clearly visible warning sign at the crossing point stating the fence is electrified. The crossing point must be safe for users -- typically a non-electrified section with insulated handles, a gate, or a stile. Continuous electrification across a path with no safe crossing is an obstruction of the highway. Standard BS EN 60335-2-76 applies to electric fence installations. Fences must be properly earthed and use approved energisers.', null, 'Obstruction of highway is a criminal offence. Injury from unsigned electric fence may result in civil liability and HSE prosecution.', 'GB'],
-    ['Horse riding rights', 'Only bridleways, restricted byways, and byways -- NOT footpaths', 0, 'Horse riding is permitted on bridleways, restricted byways, and byways open to all traffic (BOATs). Horse riding is NOT permitted on public footpaths. Cyclists may use bridleways but must give way to walkers and horse riders. Carriage driving is permitted on restricted byways and BOATs but not on bridleways or footpaths. Off-road motor vehicles are only permitted on BOATs with valid road tax, MOT, and insurance. The landowner may grant permissive riding on footpaths or private land but this does not create a public right.', null, 'Riding a horse on a footpath is a trespass (civil matter, not criminal). However, causing damage may result in a civil claim. Cycling on a footpath is not a criminal offence but cycling dangerously on any path may be prosecuted.', 'GB'],
+    [
+      'Klompenpad',
+      'Recreatief wandelpad over boerenland. Vrijwillige deelname grondeigenaar. Stichting Wandelnet beheert netwerk.',
+      1.0,
+      'Gewasschade voorkomen door routemarkering langs perceelranden. Geen recht op schadevergoeding voor grondeigenaar tenzij contractueel vastgelegd.',
+      'Geen wettelijke termijn. Overeenkomst tussen Stichting Wandelnet en grondeigenaar bepaalt voorwaarden.',
+      'Afsluiting zonder overleg met Stichting Wandelnet kan leiden tot reputatieschade. Geen wettelijke handhaving — privaatrechtelijke overeenkomst.',
+      'NL',
+    ],
+    [
+      'LAW-route (langeafstandswandelpad)',
+      'Langeafstandswandelpad (LAW), onderdeel van het NSWP (Nationaal Strategisch Wandelpadenplan). Recht van overpad gebaseerd op overeenkomsten met grondeigenaren of openbare wegen.',
+      1.5,
+      'Routes volgen zoveel mogelijk openbare wegen en paden. Bij doorgang over privégrond: toestemming eigenaar vereist.',
+      'Geen wettelijk afdwingbare hersteltermijn. Overleg met gemeente en Wandelnet bij verstoringen.',
+      'Geen strafrechtelijke sanctie bij afsluiting privépad. Gemeente kan handhaven als openbaar pad is afgesloten.',
+      'NL',
+    ],
+    [
+      'Openbaar voetpad (gemeentelijk)',
+      'Openbaar pad in eigendom of beheer van gemeente. Onderhoud door gemeente of waterschap.',
+      1.5,
+      'Geen gewassen op openbaar pad. Gemeente verantwoordelijk voor onderhoud. Aanliggende eigenaar mag niet blokkeren.',
+      'Herstel binnen 14 dagen na melding bij gemeente. Spoedherstel bij gevaarlijke situatie.',
+      'Strafbaar feit bij opzettelijke blokkade openbaar pad (Wetboek van Strafrecht art. 427). Gemeente kan bestuursdwang opleggen.',
+      'NL',
+    ],
+    [
+      'Fietspad (openbaar)',
+      'Openbaar fietspad. Onderhoud door wegbeheerder (gemeente, provincie, of waterschap). Wettelijke basis: Wegenwet.',
+      2.0,
+      'Geen belemmering door gewassen of materialen. Minimale doorrijhoogte 2,5 m. Verlichting bij onverlichte gebieden aanbevolen.',
+      'Herstel conform onderhoudsnormen wegbeheerder. CROW-richtlijnen voor fietspaden.',
+      'Blokkade van openbaar fietspad: bestuursrechtelijke handhaving door wegbeheerder. Aansprakelijkheid bij letsel door gebrekkig onderhoud.',
+      'NL',
+    ],
+    [
+      'Jaagpad (langs waterweg)',
+      'Historisch pad langs kanalen en rivieren, oorspronkelijk voor trekschuiten. Veel jaagpaden zijn nu recreatief wandel- of fietspad. Beheer door waterschap of Rijkswaterstaat.',
+      2.0,
+      'Geen obstructie door aanliggende eigenaren. Toegang voor onderhoud watergang door waterschap moet gewaarborgd blijven.',
+      'Waterschap kan binnen 48 uur onderhoudstoegang afdwingen bij blokkade.',
+      'Waterschap kan bestuursdwang opleggen. Blokkade onderhoudstoegang: overtreding Waterwet.',
+      'NL',
+    ],
+    [
+      'Ruiterpad',
+      'Aangewezen pad voor paardrijden. Veelal in natuurgebieden beheerd door Staatsbosbeheer of provincie. Niet alle wandelpaden zijn open voor ruiters.',
+      3.0,
+      'Ruiters alleen op aangewezen ruiterpaden. Honden aangelijnd in natuurgebieden. Geen ruiters op voetpaden tenzij specifiek aangewezen.',
+      'Geen specifieke hersteltermijn. Beheerder (Staatsbosbeheer/provincie) bepaalt onderhoudsniveau.',
+      'Boete bij overtreding toegangsregels natuurgebied (APV of Wet natuurbescherming). Buitengewoon opsporingsambtenaar (BOA) kan bekeuren.',
+      'NL',
+    ],
+    [
+      'Afsluiting openbaar pad',
+      'Alleen met toestemming gemeente (verkeersbesluit of APV). Tijdelijke afsluiting voor evenementen of werkzaamheden via vergunning.',
+      0,
+      'Alternatieve route verplicht bij langdurige afsluiting. Bebording conform CROW-richtlijnen.',
+      'Verkeersbesluit procedure: 6 weken zienswijze, bezwaar en beroep mogelijk.',
+      'Illegale afsluiting: bestuursdwang gemeente. Strafrechtelijke handhaving bij gevaarlijke situatie.',
+      'NL',
+    ],
   ];
 
   for (const [pathType, obligation, width, cropping, reinstatement, obstruction, jur] of rowData) {
     db.run(
       `INSERT INTO rights_of_way (path_type, obligation, min_width_m, cropping_rules, reinstatement_deadline, obstruction_liability, jurisdiction)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [pathType, obligation, width, cropping, reinstatement, obstruction, jur]
+      [pathType, obligation, width, cropping, reinstatement, obstruction, jur],
     );
   }
 
-  // --- Common Land Rules ---
+  // --- Common Land / Pachtrecht ---
   const commonData: [string, number, string, string, string][] = [
-    ['Fencing', 1, 'DEFRA (s.38 Commons Act 2006) or local authority (s.194 Law of Property Act 1925)', 'Apply to DEFRA for consent under s.38 Commons Act 2006. Application must demonstrate public benefit or necessity for land management. Alternatively, for commons in former metropolitan areas, apply to local authority under s.194 LPA 1925.', 'GB'],
-    ['Building or construction', 1, 'DEFRA (s.38 Commons Act 2006) or local authority', 'Generally prohibited without consent. Any permanent structure requires s.38 consent. Planning permission alone is not sufficient. Both s.38 consent and planning permission are needed.', 'GB'],
-    ['Driving vehicles', 1, 'Landowner or commons council', 'No driving on common land without lawful authority. Exception: commoners exercising registered rights. Emergency vehicles exempt. Access for land management may require explicit agreement.', 'GB'],
-    ['Public access for recreation', 0, 'Automatic right under CRoW Act 2000', 'Automatic right of access on foot for recreation under Countryside and Rights of Way Act 2000 s.2. Applies to all registered common land in England and Wales. Dogs must be on leads near livestock.', 'GB'],
-    ['Agricultural works', 1, 'DEFRA (s.38 Commons Act 2006)', 'Consent required for any permanent works affecting common land. Temporary agricultural operations (hay-making, stock movements) by commoners exercising rights do not need consent.', 'GB'],
-    ['Village green protection', 1, 'Local authority or Secretary of State', 'Registered village greens have special statutory protection under the Commons Act 2006 and the Commons Registration Act 1965. It is a criminal offence to damage or encroach upon a village green, or to interrupt the use of the green for lawful sports and pastimes. Registration as a village green requires evidence of use "as of right" by a significant number of local inhabitants for lawful sports and pastimes for a period of at least 20 years. Once registered, the protection is very strong -- development is effectively prohibited unless the green is de-registered by the Secretary of State (extremely rare).', 'GB'],
-    ['Open access land (CRoW Act)', 0, 'Automatic right under CRoW Act 2000', 'The Countryside and Rights of Way Act 2000 s.2 provides a right of access on foot for open-air recreation to all registered common land in England and Wales, plus mapped open country (mountain, moor, heath, down) and registered common land. Access is on foot only (no cycling, horse riding, or driving). Restrictions: no camping, no fires, no dogs off lead near livestock (1 March to 31 July on open access land). Landowners may restrict access for up to 28 days per year (except on common land) and indefinitely for land management reasons with Natural England approval. Excepted land: cultivated fields, gardens, buildings, quarries, railways, MoD land.', 'GB'],
+    [
+      'Reguliere pacht',
+      1,
+      'Grondkamer (RVO)',
+      'Langjarige pachtovereenkomst: minimaal 6 jaar voor los bouwland, 12 jaar voor een hoeve. Pachtnormen vastgesteld door RVO. Opzegging alleen via Grondkamer. Pachter heeft voorkeursrecht bij verkoop. Pachtprijs getoetst aan regionormen (14 pachtprijsgebieden).',
+      'NL',
+    ],
+    [
+      'Geliberaliseerde pacht',
+      0,
+      'Geen Grondkamer-toets',
+      'Pachtovereenkomst korter dan 6 jaar. Vrije prijsvorming (geen pachtnormen). Geen verlenging van rechtswege. Geen voorkeursrecht pachter bij verkoop. Geschikt voor tijdelijk gebruik of seizoenspacht.',
+      'NL',
+    ],
+    [
+      'Teeltpacht',
+      0,
+      'Geen Grondkamer-toets',
+      'Pachtovereenkomst voor maximaal 1 jaar (of 1 teeltseizoen) voor de teelt van een specifiek gewas. Vrije prijs. Geen verlenging. Geen voorkeursrecht pachter.',
+      'NL',
+    ],
+    [
+      'Erfpacht',
+      1,
+      'Kadaster (registratie); geen Grondkamer-toets',
+      'Eeuwigdurend of langjarig zakelijk recht om grond te gebruiken tegen betaling van een canon. Geregistreerd bij Kadaster. Geen Grondkamer-toets. Canon wordt periodiek herzien (vaak elke 10 of 25 jaar). Erfpachter heeft vergaande gebruiksrechten maar geen eigendom.',
+      'NL',
+    ],
+    [
+      'Pachtnormen 2026 (regionormen)',
+      0,
+      'RVO (Rijksdienst voor Ondernemend Nederland)',
+      'Pachtnormen per pachtprijsgebied (14 regio\'s). Voorbeelden: Bouwhoek en Hogeland circa 800 EUR/ha, Waterland en Droogmakerijen circa 400 EUR/ha, IJsselmeerpolders circa 900 EUR/ha, Zuidwestelijk akkerbouwgebied circa 600 EUR/ha. Normen jaarlijks vastgesteld bij ministerieel besluit.',
+      'NL',
+    ],
+    [
+      'Pachtprijsgebieden',
+      0,
+      'RVO',
+      'Nederland is verdeeld in 14 pachtprijsgebieden voor de vaststelling van pachtnormen: (1) Bouwhoek en Hogeland, (2) Veenkoloniën en Oldambt, (3) Noordelijk weidegebied, (4) Oostelijk veehouderijgebied, (5) Centraal veehouderijgebied, (6) IJsselmeerpolders, (7) Westelijk Holland, (8) Waterland en Droogmakerijen, (9) Hollands/Utrechts weidegebied, (10) Rivierengebied, (11) Zuidwestelijk akkerbouwgebied, (12) Zuidwest-Brabant, (13) Zuidelijk veehouderijgebied, (14) Zuid-Limburg.',
+      'NL',
+    ],
+    [
+      'Opzegging reguliere pacht',
+      1,
+      'Grondkamer / Pachtkamer (rechtbank)',
+      'Opzegging reguliere pacht alleen via Grondkamer. Gronden voor opzegging: eigen gebruik door verpachter, slecht pachterschap, bestemmingswijziging. Opzegtermijn minimaal 3 jaar voor hoevepacht, 1 jaar voor los land. Pachter kan in beroep bij Pachtkamer van het gerechtshof.',
+      'NL',
+    ],
   ];
 
   for (const [activity, consent, authority, process, jur] of commonData) {
     db.run(
       `INSERT INTO common_land_rules (activity, consent_required, consent_authority, process, jurisdiction)
        VALUES (?, ?, ?, ?, ?)`,
-      [activity, consent, authority, process, jur]
+      [activity, consent, authority, process, jur],
     );
   }
 
   // --- Planting Guidance ---
   const plantingData: [string, string, number | null, number, string, number, string][] = [
-    ['Woodland creation', 'Broadleaf', 1.0, 1, 'EWCO rate approximately 8,500 GBP/ha for broadleaf woodland creation. Additional payments for public access, nature recovery, and water quality benefits.', 15, 'GB'],
-    ['Woodland creation', 'Conifer', 1.0, 1, 'EWCO rate approximately 6,800 GBP/ha for conifer planting. Lower rate reflects faster establishment. Additional payments available for public access.', 15, 'GB'],
-    ['Agroforestry', 'Mixed', 0.5, 0, 'SFI agroforestry options available (not EWCO). Silvoarable and silvopasture integrated with farming systems. Payment rates vary by option.', 15, 'GB'],
-    ['Riparian planting', 'Broadleaf', null, 0, 'Grant available under Countryside Stewardship Water Capital items. No EIA required for narrow riparian strips. Focus on native broadleaf species for bank stabilisation and shade.', 15, 'GB'],
-    ['Ancient woodland buffer', 'Native broadleaf', null, 0, '15m buffer required for any new planting adjacent to ancient woodland. Buffer must use native species compatible with adjacent ancient woodland type. No non-native species within buffer.', 15, 'GB'],
-    ['Community woodland', 'Mixed', 0.5, 1, 'Higher EWCO contribution for woodlands with dedicated public access. Additional approximately 2,800 GBP/ha for full public access. Must provide maintained paths and access points.', 15, 'GB'],
-    ['Riparian woodland for water quality', 'Broadleaf', null, 0, 'Riparian woodland planting along watercourses reduces water temperature (shade), filters nutrient runoff, stabilises banks, and provides wildlife corridors. Funded under EWCO riparian supplement and Countryside Stewardship Water Capital items. No EIA required for narrow strips (<20m either side). Species: alder, willow, birch, oak, hazel. Avoid dense conifer planting adjacent to watercourses (acidification risk). Leave some open sections for kingfisher nesting banks and otter holts.', 15, 'GB'],
-    ['Natural regeneration (EWCO option)', 'Natural regen', null, 1, 'EWCO natural regeneration option: allow native woodland to establish from existing seed sources without active planting. Lower payment rate than active planting (approximately 4,500 GBP/ha) but lower establishment costs. Suitable where adjacent seed sources exist (within 50-100m). Must demonstrate natural regeneration is viable (existing seedlings, proximity to seed trees). Deer management plan typically required. EIA screening still applies. 15-year management plan required. Monitoring at years 1, 5, and 10 to verify establishment -- if natural regen fails, active planting may be required as condition.', 15, 'GB'],
-    ['Peatland restoration (tree removal)', 'None (restoration)', null, 1, 'Removing trees from deep peat (>50cm) to restore peatland function. Funded under Peatland Code (voluntary carbon market) and Nature for Climate Peatland Grant Scheme. Rationale: trees on deep peat cause drying and oxidation, releasing stored carbon. Restoration involves: felling and removing trees, blocking drainage ditches (ditch damming), raising water table, allowing sphagnum recolonisation. Peatland Code carbon credits: independently verified, tradeable on voluntary markets. EIA screening required for tree removal on peat. Forestry Commission approval needed for felling even on peat. Typical peatland restoration sites: upland blanket bog with afforestation from 1960s-80s.', 0, 'GB'],
+    [
+      'Bosaanleg (loofhout)',
+      'Inheems loofhout (eik, beuk, es, berk, els)',
+      1.0,
+      1,
+      'Provinciale subsidie bosaanleg: circa 2.000-5.000 EUR/ha afhankelijk van provincie en type bos. Aanplantsubsidie via Subsidieregeling Natuur en Landschap (SNL).',
+      0,
+      'NL',
+    ],
+    [
+      'Bosaanleg (naaldhout)',
+      'Naaldhout (grove den, douglasspar, lariks)',
+      1.0,
+      1,
+      'Provinciale subsidie beschikbaar maar lager dan voor inheems loofhout. Naaldhout vooral op arme zandgronden. Mix met loofhout aanbevolen voor biodiversiteit.',
+      0,
+      'NL',
+    ],
+    [
+      'Bossenstrategie 2030',
+      'Gemengd (inheems)',
+      null,
+      0,
+      'Nationale Bossenstrategie: 10% meer bos in 2030 (circa 37.000 ha extra). Provincies en Staatsbosbeheer voeren uit. Focus op klimaatadaptatie, biodiversiteit, en houtproductie. Subsidies via provinciale regelingen.',
+      0,
+      'NL',
+    ],
+    [
+      'LULUCF-compensatie bij ontbossing',
+      'Compensatieplicht',
+      null,
+      1,
+      'Bij ontbossing geldt een compensatieplicht onder de LULUCF-regeling (EU). Ontbossing moet worden gecompenseerd met gelijkwaardige bosaanleg elders. Geldt bovenop herplantplicht Wet natuurbescherming.',
+      0,
+      'NL',
+    ],
+    [
+      'Agroforestry (boslandbouw)',
+      'Gemengd (fruit, noten, hout)',
+      0.5,
+      0,
+      'Subsidie via Gemeenschappelijk Landbouwbeleid (GLB) eco-regelingen. Combinatie van bomen met landbouw op zelfde perceel. Geen specifieke minimumomvang. Steun circa 200-400 EUR/ha/jaar als eco-regeling.',
+      0,
+      'NL',
+    ],
+    [
+      'Soortenkeuze inheems',
+      'Inheems (eik, beuk, els, wilg, berk, haagbeuk, linde, iep)',
+      null,
+      0,
+      'Inheemse soorten aanbevolen voor biodiversiteit en klimaatbestendigheid. Eik (Quercus robur/petraea) geschikt op klei en zand. Els (Alnus) op natte gronden. Wilg (Salix) langs watergangen. Beuk (Fagus) op lemig zand.',
+      0,
+      'NL',
+    ],
+    [
+      'Oeverbegroeiing langs watergangen',
+      'Oeverplanten (els, wilg, riet)',
+      null,
+      0,
+      'Subsidie via waterschappen of Groen-Blauwe Diensten. Oeverbegroeiing stabiliseert oever, filtert nutrienten, en bevordert biodiversiteit. Waterschap kan onderhoudsverplichtingen opleggen.',
+      0,
+      'NL',
+    ],
+    [
+      'Natuurcompensatie bij ruimtelijke ontwikkeling',
+      'Compensatieplicht',
+      null,
+      1,
+      'Bij aantasting van beschermde natuur (incl. bos) door bouwprojecten geldt het compensatiebeginsel. Compensatie in oppervlakte en kwaliteit. Vastgelegd in bestemmingsplan of omgevingsvergunning. Provinciale compensatieregels variëren.',
+      0,
+      'NL',
+    ],
   ];
 
   for (const [purpose, species, minArea, eia, grant, buffer, jur] of plantingData) {
     db.run(
       `INSERT INTO planting_guidance (purpose, species_group, min_area_ha, eia_screening_required, grant_available, ancient_woodland_buffer_m, jurisdiction)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [purpose, species, minArea, eia, grant, buffer, jur]
+      [purpose, species, minArea, eia, grant, buffer, jur],
     );
   }
 
   // --- FTS5 Search Index ---
   const ftsData: [string, string, string, string][] = [
-    ['Hedgerow removal notice', 'Under the Hedgerow Regulations 1997, removing a hedgerow requires 42 days notice to the local planning authority. The LPA may issue a hedgerow retention notice if the hedgerow is classified as important under Schedule 1.', 'hedgerow', 'GB'],
-    ['Important hedgerow criteria', 'A hedgerow is classified as important if it is over 30 years old and meets at least one Schedule 1 criterion: supports protected species, recorded in parish boundary records, includes archaeological features, or marks a pre-1850 boundary.', 'hedgerow', 'GB'],
-    ['Hedgerow trimming season', 'Hedgerow trimming should not take place during bird nesting season (1 March to 31 August) under cross-compliance GAEC 7a. No notice is needed for trimming outside nesting season.', 'hedgerow', 'GB'],
-    ['Hedgerow penalties', 'Unlawful hedgerow removal carries a fine of up to 25,000 GBP plus a remediation order requiring replanting. A 2m buffer from the centre of the hedge must be maintained under cross-compliance.', 'hedgerow', 'GB'],
-    ['Felling licence threshold', 'A felling licence from the Forestry Commission is required when felling more than 5 cubic metres of timber in any calendar quarter. Up to 2 cubic metres of the 5 m3 exemption may be sold.', 'felling', 'GB'],
-    ['Felling licence application', 'Apply to the Forestry Commission online or via Form FC1. Statutory determination period is 8 weeks. Replanting conditions are normally attached, requiring replanting within 2 years with specified species.', 'felling', 'GB'],
-    ['Felling exemptions', 'Exempt from felling licence: fruit trees, garden trees (under 0.1ha), trees covered by planning permission, dangerous trees (notify FC within 5 days). TPO trees need separate local authority consent.', 'felling', 'GB'],
-    ['Felling penalties', 'Felling without a licence carries a fine of up to 2,500 GBP or twice the value of the trees, whichever is greater. Court may also order replanting.', 'felling', 'GB'],
-    ['SSSI consent requirement', 'Any operation listed on the SSSI notification requires consent from Natural England before it can be carried out. Natural England has 28 days to respond. Operations include grazing changes, drainage, fertiliser application, burning, and construction.', 'sssi', 'GB'],
-    ['SSSI penalties', 'Carrying out operations on an SSSI without Natural England consent: up to 20,000 GBP fine in magistrates court or unlimited fine in Crown Court, plus restoration costs.', 'sssi', 'GB'],
-    ['SSSI appeal', 'If Natural England refuses consent or attaches unacceptable conditions, the owner can appeal to the Secretary of State. Compensation may be claimed for financial loss caused by refusal.', 'sssi', 'GB'],
-    ['Footpath width and reinstatement', 'Public footpaths: minimum 1m wide (field edge) or 1.5m (cross-field). Must reinstate within 14 days of disturbance. 24 hours if crop already growing on a cross-field path. Cannot grow crops on the path surface.', 'rights_of_way', 'GB'],
-    ['Bridleway width and reinstatement', 'Public bridleways: minimum 2m wide (field edge) or 3m (cross-field). Must reinstate within 14 days. Same 24-hour rule for subsequent disturbance. Surface must be passable on horseback.', 'rights_of_way', 'GB'],
-    ['Public right of way obstruction', 'Obstructing a public right of way is a criminal offence. The local authority has power to remove obstructions and charge the landowner. Gates and stiles must be maintained in good repair. Gates preferred over stiles for accessibility.', 'rights_of_way', 'GB'],
-    ['Ploughing cross-field paths', 'Landowners may plough cross-field footpaths and bridleways but must reinstate within 14 days. If the path has already been disturbed once that season, reinstatement must be within 24 hours.', 'rights_of_way', 'GB'],
-    ['Common land fencing', 'Fencing on common land requires consent from DEFRA under s.38 Commons Act 2006 or from the local authority under s.194 Law of Property Act 1925. Fencing without consent is unlawful.', 'common_land', 'GB'],
-    ['Common land public access', 'All registered common land in England and Wales has automatic right of public access on foot for recreation under the Countryside and Rights of Way Act 2000 s.2.', 'common_land', 'GB'],
-    ['Woodland creation grants EWCO', 'England Woodland Creation Offer: approximately 8,500 GBP/ha for broadleaf, 6,800 GBP/ha for conifer. Additional 2,800 GBP/ha for public access. EIA screening required if over 5 hectares on semi-natural habitat.', 'planting', 'GB'],
-    ['Ancient woodland buffer', 'A 15-metre buffer of native species is required for any new planting adjacent to ancient woodland. No non-native species may be planted within the buffer zone.', 'planting', 'GB'],
-    ['EIA screening for woodland planting', 'Environmental Impact Assessment screening under the EIA (Forestry) Regulations 1999 is required for new woodland planting over 5 hectares on semi-natural habitat, or for planting in sensitive areas regardless of size.', 'planting', 'GB'],
+    ['Meldingsplicht kap houtopstand', 'Onder de Wet natuurbescherming (art. 4.2) moet het kappen van een houtopstand groter dan 10 are of een bomenrij van 20+ bomen buiten de bebouwde kom worden gemeld bij de provincie. Minimaal 1 maand voor de geplande kap.', 'hedgerow', 'NL'],
+    ['Herplantplicht na kap', 'Na het kappen van een meldingsplichtige houtopstand geldt een herplantplicht: binnen 3 jaar dezelfde oppervlakte herbeplanten. Mag op andere locatie binnen de provincie mits goedgekeurd door Gedeputeerde Staten.', 'hedgerow', 'NL'],
+    ['Kapvergunning binnen bebouwde kom', 'Binnen de bebouwde kom regelt de gemeente het kappen van bomen via de APV (Algemene Plaatselijke Verordening). Per gemeente gelden andere drempels (stamdiameter, soort, locatie). Aanvraag kapvergunning bij gemeente.', 'hedgerow', 'NL'],
+    ['Uitzonderingen meldingsplicht kap', 'Geen meldingsplicht voor: fruitbomen en notenbomen, windschermen langs landbouwgrond (max 2 rijen), kwekerij-beplanting, dunning tot 20% van stammen, bomenrijen onder 20 bomen. Altijd gemeentelijke APV checken.', 'hedgerow', 'NL'],
+    ['Monumentale bomen bescherming', 'Monumentale bomen staan op gemeentelijke lijsten en zijn beschermd via de APV of bomenverordening. Kap alleen bij direct gevaar voor personen of gebouwen. Boete tot 25.000 EUR bij ongeoorloofde kap.', 'hedgerow', 'NL'],
+    ['Houtwallen en houtsingels', 'Houtwallen en houtsingels (lijnvormige beplanting) vallen onder de Wet natuurbescherming als ze groter zijn dan 10 are of 20+ bomen bevatten. Ecologisch waardevolle landschapselementen. Meldingsplicht en herplantplicht van toepassing.', 'hedgerow', 'NL'],
 
-    // New FTS entries for expanded data
-    ['Important Hedgerow Schedule 1 criteria', 'A hedgerow is classified as important if it is at least 30 years old AND meets at least one Schedule 1 criterion: marks a pre-1850 parish or township boundary, contains a protected species, contains 7 or more woody species in a 30-metre section (6 in northern England), has associated features (bank, ditch, mature trees) with at least 4 woody species per 30m, or is part of a pre-1845 field system. LPA may issue a hedgerow retention notice preventing removal.', 'hedgerow', 'GB'],
-    ['Hedgerow planting grants CS HB1', 'Countryside Stewardship option HB1 provides approximately 11.60 GBP per metre for planting new hedgerows. Additional supplements available for species-rich hedges and associated features such as banks and ditches.', 'hedgerow', 'GB'],
-    ['Species-rich hedge definition', 'A species-rich hedgerow contains 5 or more native woody species per 30-metre section. The 7-species threshold applies to the Important Hedgerow criteria under Schedule 1 of the Hedgerow Regulations 1997. Native species include hawthorn, blackthorn, hazel, field maple, dogwood, spindle, guelder rose, dog rose, holly, oak, ash.', 'hedgerow', 'GB'],
-    ['Devon hedgebanks heritage management', 'Devon hedgebanks are earth and stone structures with vegetation on top. They are distinct from planted hedgerows and require traditional management including stone facing repair and re-turfing rather than hedge laying or coppicing. Protected under the Hedgerow Regulations 1997. Stewardship of Earth Bank option under Countryside Stewardship.', 'hedgerow', 'GB'],
-    ['Restocking conditions on felling licences', 'Most felling licences include restocking conditions requiring replanting within 2 planting seasons. Conditions specify species, density (typically 2,500 stems/ha for broadleaf), and minimum establishment rate. Failure to restock: Forestry Commission may serve a restocking notice and carry out the work at the landowner cost.', 'felling', 'GB'],
-    ['Ash dieback Chalara felling exemption', 'Ash trees affected by Chalara (Hymenoscyphus fraxineus) may be felled without a licence if dead, dying, or dangerous as a result of the disease. Must still notify the Forestry Commission within 5 working days. Restocking conditions still apply. Statutory Plant Health Notice may require felling.', 'felling', 'GB'],
-    ['Veteran and ancient trees planning protection', 'Veteran and ancient trees have no automatic statutory protection but carry strong weight in the planning system under NPPF paragraph 180c. Development resulting in loss or deterioration of ancient or veteran trees should be refused unless wholly exceptional reasons exist. The Ancient Tree Inventory maintained by the Woodland Trust records known ancient and veteran trees.', 'felling', 'GB'],
-    ['High hedges evergreen neighbour disputes', 'Evergreen hedges over 2 metres tall affecting a neighbour may be subject to complaint under Part 8 of the Anti-social Behaviour Act 2003. The local authority may issue a remedial notice requiring height reduction. This is separate from the Hedgerow Regulations 1997. Only applies to domestic/garden boundaries, not hedges between fields.', 'hedgerow', 'GB'],
-    ['Woodland management plans Forestry Commission', 'A 10-year FC-approved woodland management plan provides a framework for ongoing felling and restocking without individual licence applications. Covers objectives, inventory, thinning schedule, felling coupes, restocking species, environmental considerations. Required for EWCO and CS woodland options. Satisfies UK Forestry Standard.', 'felling', 'GB'],
-    ['SSSI nutrient enrichment liability', 'Landowners of SSSI land are liable for damage caused by nutrient enrichment from adjacent farmland, even if nutrients originate from a neighbouring farm. Natural England may serve a management notice requiring remedial action. Buffer zones, reduced application rates, and cover crops may be prescribed.', 'sssi', 'GB'],
-    ['SSSI undergrazing damage', 'Natural England may prescribe minimum stocking levels where undergrazing damages SSSI interest features. Lack of grazing leads to scrub encroachment and loss of species diversity. NE can enter management agreements with payments or serve management notices requiring grazing.', 'sssi', 'GB'],
-    ['SSSI management agreement compensation', 'If Natural England refuses consent for a listed operation, the landowner may claim compensation based on financial loss. Alternatively NE may offer a management agreement with annual payments. Agreements typically 10-25 years.', 'sssi', 'GB'],
-    ['Countryside Stewardship Higher Tier SSSI priority', 'SSSI land receives priority scoring for Countryside Stewardship Higher Tier applications. CS Higher Tier provides payments for specific management prescriptions maintaining or restoring SSSI features. Options include grassland, heathland, wetland, and woodland management.', 'sssi', 'GB'],
-    ['Bulls on public rights of way', 'DAIRY BREED bulls over 10 months old are BANNED from fields crossed by public rights of way -- absolute prohibition, no exceptions. BEEF BREED bulls over 10 months old may be kept in fields with public paths ONLY if accompanied by cows or heifers. Bulls under 10 months of any breed are permitted. Recognised dairy breeds: Holstein, Friesian, Ayrshire, Jersey, Guernsey, Kerry, Dairy Shorthorn.', 'rights_of_way', 'GB'],
-    ['Permissive paths voluntary access', 'Permissive paths are created voluntarily by landowners and carry no statutory protection. The landowner may withdraw permission at any time. Permissive paths do not become public rights of way through use provided the landowner indicates the path is permissive. Common under HLS agreements (10-year permissive access). Closure does not require legal process.', 'rights_of_way', 'GB'],
-    ['Electric fences on public paths', 'Electric fences crossing public rights of way must have a clearly visible warning sign. A non-electrified crossing section with insulated handles, gate, or stile must be provided. Continuous electrification across a path with no safe crossing is a highway obstruction offence.', 'rights_of_way', 'GB'],
-    ['Horse riding path types', 'Horse riding is permitted on bridleways, restricted byways, and byways open to all traffic (BOATs). Horse riding is NOT permitted on public footpaths. Cyclists may use bridleways giving way to walkers and riders. Carriage driving on restricted byways and BOATs only.', 'rights_of_way', 'GB'],
-    ['Village green protection', 'Registered village greens have special statutory protection. Criminal offence to damage or encroach upon a village green or interrupt use for lawful sports and pastimes. Registration requires evidence of 20 years public use as of right. Development effectively prohibited once registered.', 'common_land', 'GB'],
-    ['Open access land CRoW Act', 'CRoW Act 2000 s.2 provides right of access on foot to all registered common land plus mapped open country (mountain, moor, heath, down). Access on foot only. No camping, fires, or dogs off lead near livestock. Landowners may restrict up to 28 days per year (except common land).', 'common_land', 'GB'],
-    ['Riparian woodland water quality', 'Riparian woodland planting along watercourses reduces water temperature via shade, filters nutrient runoff, stabilises banks, and provides wildlife corridors. Funded under EWCO riparian supplement. Species: alder, willow, birch, oak. Avoid dense conifer near watercourses (acidification).', 'planting', 'GB'],
-    ['Natural regeneration EWCO option', 'EWCO natural regeneration option allows native woodland to establish from existing seed sources without active planting. Lower payment (approximately 4,500 GBP/ha). Must demonstrate viability with proximity to seed trees. Deer management plan required. Monitoring at years 1, 5, and 10.', 'planting', 'GB'],
-    ['Peatland restoration and tree removal', 'Removing trees from deep peat (over 50cm) to restore peatland function. Funded under Peatland Code (voluntary carbon credits) and Nature for Climate Peatland Grant Scheme. Trees on deep peat cause drying and carbon release. Restoration involves felling, blocking drainage ditches, and raising water table.', 'planting', 'GB'],
+    ['Boswet-melding en wachttijd', 'Na melding van voorgenomen kap bij de provincie geldt een wachttijd van 1 maand (4 weken). Gedurende deze periode mag niet worden gekapt. Provincie kan bezwaar maken of aanvullende eisen stellen.', 'felling', 'NL'],
+    ['Strafmaat illegale kap', 'Kappen zonder vergunning of melding: maximale boete 21.750 EUR per overtreding (Wet op de economische delicten). Bestuursdwang door provincie of gemeente. Herplantplicht blijft altijd gelden.', 'felling', 'NL'],
+    ['Uitzonderingen kapvergunning', 'Uitgezonderd van meldingsplicht: fruitbomen, notenbomen, kwekerij-beplanting, windschermen (max 2 rijen), dunning onder 20% per 10 jaar. Noodkap bij gevaar zonder voorafgaande vergunning, maar achteraf melden.', 'felling', 'NL'],
+    ['Ontheffing herplantplicht', 'Ontheffing van herplantplicht aanvragen bij Gedeputeerde Staten. Alleen bij zwaarwegend maatschappelijk belang (woningbouw, infrastructuur). Compensatie in de vorm van bosaanleg elders kan worden vereist.', 'felling', 'NL'],
+    ['Noodkap gevaarlijke boom', 'Bij direct gevaar voor personen of gebouwen mag een boom zonder voorafgaande vergunning worden geveld (noodkap). Achteraf melden bij gemeente of provincie. Herplantplicht blijft gelden. Fotodocumentatie bewaren als bewijs.', 'felling', 'NL'],
+
+    ['Natura 2000 vergunningplicht', 'Nederland heeft 161 Natura 2000-gebieden. Activiteiten die een significant effect kunnen hebben op een Natura 2000-gebied vereisen een vergunning (Wnb art. 2.7). Voortoets bepaalt of passende beoordeling nodig is.', 'sssi', 'NL'],
+    ['AERIUS stikstofdepositie berekening', 'AERIUS Calculator is het verplichte rekenmodel voor stikstofdepositieberekeningen bij Natura 2000-gebieden. Berekent depositie van NOx en NH3 op habitats. Bij overschrijding KDW (Kritische Depositie Waarde) is een passende beoordeling nodig.', 'sssi', 'NL'],
+    ['Stikstofproblematiek en vergunningen', 'De stikstofproblematiek (na de PAS-uitspraak Raad van State 2019) beperkt vergunningverlening voor activiteiten nabij Natura 2000. Intern salderen (binnen bestaande vergunning) is mogelijk. Extern salderen vereist afroming van 30%.', 'sssi', 'NL'],
+    ['Passende beoordeling Natura 2000', 'Een passende beoordeling is verplicht als een activiteit significante effecten op een Natura 2000-gebied kan hebben. Beoordeelt effecten op instandhoudingsdoelen. Inclusief cumulatie met andere plannen en projecten.', 'sssi', 'NL'],
+    ['Beheerplannen Natura 2000-gebieden', 'Elk Natura 2000-gebied heeft een beheerplan met instandhoudingsdoelen en toegestane activiteiten. Activiteiten in het beheerplan als vrijgesteld opgenomen vereisen geen aparte vergunning. Beheerplannen vastgesteld door provincie of Rijkswaterstaat.', 'sssi', 'NL'],
+
+    ['Klompenpaden wandelpaden over boerenland', 'Klompenpaden zijn recreatieve wandelpaden over boerenland. Vrijwillige deelname van grondeigenaren. Beheer door Stichting Wandelnet. Geen wettelijk afdwingbaar recht van overpad — privaatrechtelijke overeenkomst.', 'rights_of_way', 'NL'],
+    ['Langeafstandswandelpaden LAW routes', 'LAW-routes (langeafstandswandelpaden) maken deel uit van het NSWP (Nationaal Strategisch Wandelpadenplan). Routes volgen openbare wegen en paden met aanvullend recht van overpad via overeenkomsten met grondeigenaren.', 'rights_of_way', 'NL'],
+    ['Afsluiting openbaar pad', 'Afsluiting van een openbaar pad is alleen toegestaan met toestemming van de gemeente (verkeersbesluit). Tijdelijke afsluiting voor werkzaamheden via vergunning. Illegale afsluiting: bestuursdwang gemeente.', 'rights_of_way', 'NL'],
+    ['Onderhoud openbare paden', 'Openbare paden in eigendom van de gemeente worden door de gemeente onderhouden. Aanliggende eigenaren mogen paden niet blokkeren. Herstel binnen 14 dagen na melding bij gemeente.', 'rights_of_way', 'NL'],
+
+    ['Reguliere pacht voorwaarden', 'Reguliere pacht: minimaal 6 jaar voor bouwland, 12 jaar voor hoevepacht. Pachtnormen vastgesteld door RVO. Opzegging via Grondkamer. Pachter heeft voorkeursrecht bij verkoop. Pachtprijs getoetst aan regionormen.', 'common_land', 'NL'],
+    ['Geliberaliseerde pacht', 'Geliberaliseerde pacht: korter dan 6 jaar, vrije prijsvorming, geen Grondkamer-toets, geen verlenging van rechtswege, geen voorkeursrecht pachter. Geschikt voor tijdelijk grondgebruik.', 'common_land', 'NL'],
+    ['Pachtnormen per regio', 'Nederland kent 14 pachtprijsgebieden met eigen normen. Voorbeelden: Bouwhoek/Hogeland circa 800 EUR/ha, Waterland circa 400 EUR/ha, IJsselmeerpolders circa 900 EUR/ha. Normen jaarlijks vastgesteld bij ministerieel besluit.', 'common_land', 'NL'],
+    ['Erfpacht zakelijk recht', 'Erfpacht is een zakelijk recht om grond te gebruiken tegen betaling van een canon. Eeuwigdurend of langjarig. Geregistreerd bij Kadaster. Geen Grondkamer-toets. Canon periodiek herzien.', 'common_land', 'NL'],
+
+    ['Subsidie bosaanleg provincie', 'Provinciale subsidies voor bosaanleg variëren van circa 2.000 tot 5.000 EUR/ha afhankelijk van provincie, type bos, en locatie. Aanvraag via Subsidieregeling Natuur en Landschap (SNL) of provinciale regelingen.', 'planting', 'NL'],
+    ['Bossenstrategie 37.000 hectare extra bos', 'De Nationale Bossenstrategie streeft naar 10% meer bos in 2030: circa 37.000 hectare extra. Focus op klimaatadaptatie, biodiversiteit, en duurzame houtproductie. Uitvoering door provincies en Staatsbosbeheer.', 'planting', 'NL'],
+    ['Inheemse boomsoorten aanbeveling', 'Voor bosaanleg worden inheemse soorten aanbevolen: zomereik (Quercus robur), wintereik (Q. petraea), beuk (Fagus sylvatica), zwarte els (Alnus glutinosa), zachte berk (Betula pubescens), schietwilg (Salix alba), haagbeuk (Carpinus betulus), winterlinde (Tilia cordata).', 'planting', 'NL'],
+    ['LULUCF compensatieplicht bij ontbossing', 'Bij ontbossing geldt een compensatieplicht onder de EU LULUCF-regeling. CO2-uitstoot door ontbossing moet worden gecompenseerd met gelijkwaardige bosaanleg. Geldt bovenop nationale herplantplicht.', 'planting', 'NL'],
+    ['Agroforestry boslandbouw subsidie', 'Agroforestry (boslandbouw) combineert bomen met landbouw op hetzelfde perceel. Subsidie via GLB eco-regelingen (circa 200-400 EUR/ha/jaar). Geen specifieke minimumomvang. Bevordert biodiversiteit en bodemkwaliteit.', 'planting', 'NL'],
   ];
 
   for (const [title, body, topic, jur] of ftsData) {
     db.run(
       `INSERT INTO search_index (title, body, topic, jurisdiction) VALUES (?, ?, ?, ?)`,
-      [title, body, topic, jur]
+      [title, body, topic, jur],
     );
   }
 
   // --- Metadata ---
-  db.run("INSERT OR REPLACE INTO db_metadata (key, value) VALUES ('last_ingest', '2026-04-03')", []);
-  db.run("INSERT OR REPLACE INTO db_metadata (key, value) VALUES ('build_date', '2026-04-03')", []);
+  db.run("INSERT OR REPLACE INTO db_metadata (key, value) VALUES ('last_ingest', '2026-04-04')", []);
+  db.run("INSERT OR REPLACE INTO db_metadata (key, value) VALUES ('build_date', '2026-04-04')", []);
 
   return db;
 }

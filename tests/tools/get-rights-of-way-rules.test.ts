@@ -24,34 +24,34 @@ describe('get_rights_of_way_rules tool', () => {
     expect(typed.results_count).toBeGreaterThan(3);
   });
 
-  test('filters by footpath type', () => {
-    const result = handleGetRightsOfWayRules(db, { path_type: 'Footpath' });
+  test('filters by Klompenpad type', () => {
+    const result = handleGetRightsOfWayRules(db, { path_type: 'Klompenpad' });
     const typed = result as { results: { path_type: string; min_width_m: number }[] };
     expect(typed.results.length).toBeGreaterThan(0);
     expect(typed.results[0].min_width_m).toBe(1.0);
   });
 
-  test('bridleway has correct minimum width', () => {
-    const result = handleGetRightsOfWayRules(db, { path_type: 'Bridleway' });
+  test('Ruiterpad has correct minimum width', () => {
+    const result = handleGetRightsOfWayRules(db, { path_type: 'Ruiterpad' });
     const typed = result as { results: { min_width_m: number }[] };
     expect(typed.results.length).toBeGreaterThan(0);
-    expect(typed.results[0].min_width_m).toBe(2.0);
+    expect(typed.results[0].min_width_m).toBe(3.0);
   });
 
-  test('reinstatement deadline is present', () => {
-    const result = handleGetRightsOfWayRules(db, { path_type: 'Footpath' });
+  test('reinstatement deadline is present for openbaar voetpad', () => {
+    const result = handleGetRightsOfWayRules(db, { path_type: 'Openbaar voetpad' });
     const typed = result as { results: { reinstatement_deadline: string }[] };
-    expect(typed.results[0].reinstatement_deadline).toContain('14 days');
+    expect(typed.results[0].reinstatement_deadline).toContain('14 dagen');
   });
 
   test('filters by issue keyword', () => {
-    const result = handleGetRightsOfWayRules(db, { issue: 'obstruct' });
+    const result = handleGetRightsOfWayRules(db, { issue: 'bestuursdwang' });
     const typed = result as { results: { obstruction_liability: string }[] };
     expect(typed.results.length).toBeGreaterThan(0);
   });
 
   test('rejects unsupported jurisdiction', () => {
-    const result = handleGetRightsOfWayRules(db, { jurisdiction: 'NL' });
+    const result = handleGetRightsOfWayRules(db, { jurisdiction: 'GB' });
     expect(result).toHaveProperty('error', 'jurisdiction_not_supported');
   });
 });

@@ -1,0 +1,26 @@
+{
+  "mcp_name": "Netherlands Land Woodland MCP",
+  "jurisdiction": "NL",
+  "build_date": "2026-04-04",
+  "status": "populated",
+  "tables": {
+    "hedgerow_rules": 9,
+    "felling_rules": 11,
+    "sssi_operations": 10,
+    "rights_of_way": 7,
+    "common_land_rules": 7,
+    "planting_guidance": 8,
+    "tpo_rules": 4,
+    "search_index": 29
+  },
+  "sources": [
+    "Wet natuurbescherming (Wnb) art. 4.2-4.6",
+    "Gemeentelijke APV (kapvergunning)",
+    "Natura 2000 beheerplannen",
+    "RVO Pachtbeleid / pachtnormen",
+    "Kadaster (erfpacht)",
+    "Staatsbosbeheer / Nationale Bossenstrategie",
+    "AERIUS Calculator (stikstof)",
+    "Stichting Wandelnet (klompenpaden)"
+  ]
+}

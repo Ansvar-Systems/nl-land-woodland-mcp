@@ -36,109 +36,124 @@ Check when data was last ingested, staleness status, and how to trigger a refres
 
 ### `search_land_rules`
 
-Full-text search across all land and woodland management rules. Use for broad queries about hedgerows, felling, SSSI, rights of way, common land, or planting.
+Full-text search across all Dutch land and woodland management rules. Use for broad queries about houtopstanden, kap, Natura 2000, pachtrecht, openbare paden, or bosaanleg.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `query` | string | Yes | Free-text search query |
 | `topic` | string | No | Filter by topic (hedgerow, felling, sssi, rights_of_way, common_land, planting) |
-| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: GB) |
+| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: NL) |
 | `limit` | number | No | Max results (default: 20, max: 50) |
 
-**Example:** `{ "query": "hedgerow removal notice" }`
+**Example:** `{ "query": "kapvergunning herplantplicht" }`
 
 ---
 
 ### `check_hedgerow_rules`
 
-Check hedgerow regulations by action type. Returns notice requirements, exemptions, important hedgerow criteria, and penalties under the Hedgerow Regulations 1997.
+Check houtopstand/bomenrij regulations by action type. Returns meldingsplicht, uitzonderingen, herplantplicht, and boetes under the Wet natuurbescherming art. 4.2-4.6.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `action` | string | Yes | Action type (e.g. remove, trim, lay, coppice, replace) |
-| `hedgerow_type` | string | No | Hedgerow classification (e.g. important, standard) |
-| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: GB) |
+| `action` | string | Yes | Action type (e.g. Kappen, Snoeien, Herplant, Melding, Monumentale) |
+| `hedgerow_type` | string | No | Houtopstand classification |
+| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: NL) |
 
-**Returns:** Notice requirement (boolean), exemptions, important hedgerow criteria, penalties, regulation reference.
+**Returns:** Notice requirement (boolean), exemptions, criteria, penalties, regulation reference.
 
-**Example:** `{ "action": "remove" }`
+**Example:** `{ "action": "Kappen" }`
 
 ---
 
 ### `get_felling_licence_rules`
 
-Get tree felling licence requirements by volume, area, or reason. Returns whether a licence is needed, exemptions, application process, and penalties under the Forestry Act 1967.
+Get kapvergunning requirements by reason. Returns whether a vergunning/melding is needed, exemptions, application process, and strafmaat.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `volume_m3` | number | No | Volume of timber to fell in cubic metres |
-| `area_ha` | number | No | Area of woodland in hectares |
-| `reason` | string | No | Reason for felling (e.g. dangerous, planning, garden, fruit) |
-| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: GB) |
+| `volume_m3` | number | No | Volume of timber in cubic metres |
+| `area_ha` | number | No | Area of houtopstand in hectares |
+| `reason` | string | No | Reason for kap (e.g. Gevaarlijke, Fruit, Herplant, Dunning) |
+| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: NL) |
 
-**Returns:** Licence assessment (if volume provided), matching rules with licence requirement, thresholds, exemptions, application process, penalties.
+**Returns:** Matching rules with vergunning requirement, thresholds, exemptions, application process, penalties.
 
-**Example:** `{ "volume_m3": 8 }` -- returns assessment that licence is required (>5 m3/quarter)
+**Example:** `{ "reason": "Fruit" }` -- returns that fruitbomen are exempt from meldingsplicht
 
 ---
 
 ### `check_sssi_consent`
 
-Check whether an activity on a Site of Special Scientific Interest requires Natural England consent. Returns process, typical conditions, and penalties.
+Check whether an activity in or near a Natura 2000-gebied requires a Wnb vergunning. Returns process, typical conditions (AERIUS, KDW), and boetes.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `activity` | string | Yes | Proposed activity (e.g. grazing, drainage, fertiliser, planting, burning, construction) |
-| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: GB) |
+| `activity` | string | Yes | Proposed activity (e.g. Nieuwbouw, Uitbreiding, Bemesting, Grondverzet, Recreatief) |
+| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: NL) |
 
-**Returns:** Consent required (boolean), process (how to apply), typical conditions, penalties.
+**Returns:** Vergunning required (boolean), process (including AERIUS berekening), typical conditions, penalties.
 
-**Example:** `{ "activity": "fertiliser" }`
+**Example:** `{ "activity": "Bemesting" }`
 
 ---
 
 ### `get_rights_of_way_rules`
 
-Get public rights of way obligations by path type and issue. Returns minimum widths, cropping rules, reinstatement deadlines, and obstruction liability.
+Get rules for openbare paden by path type and issue. Returns minimum widths, cropping rules, reinstatement deadlines, and obstruction liability.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `path_type` | string | No | Path type (footpath, bridleway, restricted_byway, byway) |
-| `issue` | string | No | Issue type (e.g. width, crops, ploughing, obstruction, gates, stiles) |
-| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: GB) |
+| `path_type` | string | No | Path type (Klompenpad, LAW-route, Openbaar voetpad, Fietspad, Jaagpad, Ruiterpad) |
+| `issue` | string | No | Issue type (e.g. bestuursdwang, blokkade, onderhoud) |
+| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: NL) |
 
 **Returns:** Path type, obligation, minimum width (metres), cropping rules, reinstatement deadline, obstruction liability.
 
-**Example:** `{ "path_type": "footpath" }` -- returns 1m field-edge / 1.5m cross-field minimum, 14-day reinstatement
+**Example:** `{ "path_type": "Klompenpad" }` -- returns 1.0m minimum, voluntary participation rules
 
 ---
 
 ### `get_common_land_rules`
 
-Get rules for activities on common land. Returns consent requirements and responsible authority under the Commons Act 2006.
+Get pachtrecht rules for land lease in the Netherlands. Returns consent requirements, responsible authority (Grondkamer/RVO), and process.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `activity` | string | No | Proposed activity (e.g. fencing, building, vehicles) |
-| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: GB) |
+| `activity` | string | No | Pacht type (e.g. Reguliere, Geliberaliseerde, Teelt, Erfpacht, Pachtnormen) |
+| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: NL) |
 
 **Returns:** Activity, consent required (boolean), consent authority, process.
 
-**Example:** `{ "activity": "fencing" }`
+**Example:** `{ "activity": "Reguliere" }`
 
 ---
 
 ### `get_planting_guidance`
 
-Get woodland planting guidance including grants (EWCO), EIA screening thresholds, ancient woodland buffers, and species recommendations.
+Get bosaanleg guidance including provincial subsidies, Bossenstrategie targets, soortenkeuze, and LULUCF compensatie.
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `tree_type` | string | No | Species group (e.g. broadleaf, conifer, mixed) |
-| `purpose` | string | No | Planting purpose (e.g. woodland creation, agroforestry, riparian, community) |
+| `tree_type` | string | No | Species group (e.g. loofhout, naaldhout, inheems, gemengd) |
+| `purpose` | string | No | Planting purpose (e.g. Bosaanleg, Agroforestry, Oeverbegroeiing, Natuurcompensatie) |
 | `area_ha` | number | No | Planned planting area in hectares (triggers EIA note if >5ha) |
-| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: GB) |
+| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: NL) |
 
-**Returns:** Purpose, species group, minimum area, EIA screening required, grant available (with rates), ancient woodland buffer distance.
+**Returns:** Purpose, species group, minimum area, EIA screening required, grant available (with rates).
 
-**Example:** `{ "tree_type": "broadleaf", "purpose": "woodland creation", "area_ha": 10 }`
+**Example:** `{ "tree_type": "loofhout", "purpose": "Bosaanleg" }`
+
+---
+
+### `get_tpo_rules`
+
+Get rules for monumentale bomen (beschermde bomen) including consent requirements, boomeffectanalyse, and penalties.
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `scenario` | string | No | Scenario (e.g. Werkzaamheden, Dode, Bouw, Beschermde) |
+| `jurisdiction` | string | No | ISO 3166-1 alpha-2 code (default: NL) |
+
+**Returns:** Scenario, consent required (boolean), consent authority, exemptions, process, penalties, regulation reference.
+
+**Example:** `{ "scenario": "Werkzaamheden" }`

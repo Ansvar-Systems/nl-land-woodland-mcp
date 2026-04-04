@@ -18,20 +18,20 @@ describe('search_land_rules tool', () => {
     if (existsSync(TEST_DB)) unlinkSync(TEST_DB);
   });
 
-  test('returns results for hedgerow query', () => {
-    const result = handleSearchLandRules(db, { query: 'hedgerow' });
+  test('returns results for houtopstand query', () => {
+    const result = handleSearchLandRules(db, { query: 'houtopstand' });
     expect(result).toHaveProperty('results_count');
     expect((result as { results_count: number }).results_count).toBeGreaterThan(0);
   });
 
-  test('returns results for felling query', () => {
-    const result = handleSearchLandRules(db, { query: 'felling licence' });
+  test('returns results for kap query', () => {
+    const result = handleSearchLandRules(db, { query: 'kap' });
     expect(result).toHaveProperty('results_count');
     expect((result as { results_count: number }).results_count).toBeGreaterThan(0);
   });
 
   test('respects topic filter', () => {
-    const result = handleSearchLandRules(db, { query: 'consent', topic: 'sssi' });
+    const result = handleSearchLandRules(db, { query: 'vergunning', topic: 'sssi' });
     const typedResult = result as { results: { topic: string }[] };
     expect(typedResult.results.length).toBeGreaterThan(0);
     for (const r of typedResult.results) {
@@ -40,12 +40,12 @@ describe('search_land_rules tool', () => {
   });
 
   test('rejects unsupported jurisdiction', () => {
-    const result = handleSearchLandRules(db, { query: 'hedgerow', jurisdiction: 'FR' });
+    const result = handleSearchLandRules(db, { query: 'houtopstand', jurisdiction: 'FR' });
     expect(result).toHaveProperty('error', 'jurisdiction_not_supported');
   });
 
   test('limits results', () => {
-    const result = handleSearchLandRules(db, { query: 'hedgerow OR felling OR consent OR footpath OR common OR planting', limit: 3 });
+    const result = handleSearchLandRules(db, { query: 'kap OR pacht OR natura OR bos OR pad OR subsidie', limit: 3 });
     const typedResult = result as { results: unknown[] };
     expect(typedResult.results.length).toBeLessThanOrEqual(3);
   });

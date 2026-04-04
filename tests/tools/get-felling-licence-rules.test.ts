@@ -24,30 +24,25 @@ describe('get_felling_licence_rules tool', () => {
     expect(typed.results_count).toBeGreaterThan(5);
   });
 
-  test('assesses volume under threshold (3 m3)', () => {
-    const result = handleGetFellingLicenceRules(db, { volume_m3: 3 });
-    const typed = result as { licence_assessment: string };
-    expect(typed.licence_assessment).toContain('within the small felling exemption');
-  });
-
-  test('assesses volume over threshold (10 m3)', () => {
-    const result = handleGetFellingLicenceRules(db, { volume_m3: 10 });
-    const typed = result as { licence_assessment: string };
-    expect(typed.licence_assessment).toContain('felling licence from the Forestry Commission is required');
-  });
-
-  test('assesses volume at sale limit (2 m3)', () => {
-    const result = handleGetFellingLicenceRules(db, { volume_m3: 2 });
-    const typed = result as { licence_assessment: string };
-    expect(typed.licence_assessment).toContain('5 m3/quarter');
-    expect(typed.licence_assessment).toContain('2 m3');
-  });
-
-  test('filters by reason', () => {
-    const result = handleGetFellingLicenceRules(db, { reason: 'dangerous' });
+  test('filters by reason (gevaarlijk/noodkap)', () => {
+    const result = handleGetFellingLicenceRules(db, { reason: 'Gevaarlijke' });
     const typed = result as { results: { scenario: string }[] };
     expect(typed.results.length).toBeGreaterThan(0);
-    expect(typed.results[0].scenario.toLowerCase()).toContain('dangerous');
+    expect(typed.results[0].scenario.toLowerCase()).toContain('gevaarlijke');
+  });
+
+  test('filters by reason (fruit)', () => {
+    const result = handleGetFellingLicenceRules(db, { reason: 'Fruit' });
+    const typed = result as { results: { scenario: string; licence_required: boolean }[] };
+    expect(typed.results.length).toBeGreaterThan(0);
+    // Fruitbomen are exempt
+    expect(typed.results[0].licence_required).toBe(false);
+  });
+
+  test('returns herplantplicht rules', () => {
+    const result = handleGetFellingLicenceRules(db, { reason: 'Herplant' });
+    const typed = result as { results: { scenario: string }[] };
+    expect(typed.results.length).toBeGreaterThan(0);
   });
 
   test('rejects unsupported jurisdiction', () => {

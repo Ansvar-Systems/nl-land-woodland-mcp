@@ -40,6 +40,6 @@ export function handleGetCommonLandRules(db: Database, args: CommonLandArgs) {
       consent_authority: r.consent_authority,
       process: r.process,
     })),
-    _meta: buildMeta({ source_url: 'https://www.legislation.gov.uk/ukpga/2006/26/contents' }),
+    _meta: buildMeta({ source_url: 'https://www.rvo.nl/onderwerpen/pacht' }),
   };
 }
