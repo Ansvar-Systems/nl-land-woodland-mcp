@@ -4,14 +4,14 @@
   "build_date": "2026-04-04",
   "status": "populated",
   "tables": {
-    "hedgerow_rules": 9,
-    "felling_rules": 11,
-    "sssi_operations": 10,
-    "rights_of_way": 7,
-    "common_land_rules": 7,
-    "planting_guidance": 8,
-    "tpo_rules": 4,
-    "search_index": 29
+    "hedgerow_rules": 21,
+    "felling_rules": 24,
+    "sssi_operations": 27,
+    "rights_of_way": 14,
+    "common_land_rules": 27,
+    "planting_guidance": 21,
+    "tpo_rules": 6,
+    "search_index": 58
   },
   "sources": [
     "Wet natuurbescherming (Wnb) art. 4.2-4.6",
@@ -21,6 +21,12 @@
     "Kadaster (erfpacht)",
     "Staatsbosbeheer / Nationale Bossenstrategie",
     "AERIUS Calculator (stikstof)",
-    "Stichting Wandelnet (klompenpaden)"
+    "Stichting Wandelnet (klompenpaden)",
+    "Provinciale verordeningen natuur en landschap",
+    "Wegenwet (openbare paden)",
+    "ANLb (agrarisch natuur- en landschapsbeheer)",
+    "Pachtbesluit / Grondkamer / Pachthof",
+    "GLB eco-regelingen (agroforestry)",
+    "EU LULUCF-verordening"
   ]
 }

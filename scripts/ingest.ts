@@ -8,6 +8,11 @@
  *   - RVO Pachtbeleid — pachtnormen, pachtprijsgebieden
  *   - Natura 2000 beheerplannen — vergunningplicht, AERIUS, KDW
  *   - Gemeentelijke APV — kapvergunning binnen bebouwde kom
+ *   - Provinciale verordeningen — landschapselementen, groenblauwe dooradering
+ *   - Wegenwet — openbare paden, onderhoud, toegankelijkheid
+ *   - Pachtbesluit / Grondkamer — 14 pachtprijsgebieden, geschillen
+ *   - Bossenstrategie 2030 — 37.000 ha extra bos
+ *   - Bosbrandpreventie — risicogebieden Veluwe, Brabant
  *
  * Usage: npm run ingest
  */
@@ -31,7 +36,7 @@ db.run('DELETE FROM tpo_rules', []);
 db.instance.exec('DELETE FROM search_index');
 
 // ─── Hedgerow / Houtopstand Rules ────────────────────────────────────
-// Wet natuurbescherming art. 4.2-4.6 + gemeentelijke APV
+// Wet natuurbescherming art. 4.2-4.6 + gemeentelijke APV + provinciale verordeningen
 const hedgerowData: [string, number, string | null, string | null, string | null, string | null, string][] = [
   [
     'Kappen houtopstand (>10 are buiten bebouwde kom)',
@@ -112,6 +117,118 @@ const hedgerowData: [string, number, string | null, string | null, string | null
     'Houtwallen en houtsingels (lijnvormige beplanting) vallen onder de bescherming als ze groter zijn dan 10 are of 20+ bomen bevatten. Ecologisch waardevolle landschapselementen.',
     'Bestuurlijke boete tot 25.000 EUR plus herplantplicht',
     'Wet natuurbescherming art. 4.2; provinciale verordening',
+    'NL',
+  ],
+  // ── NEW: Landschapselementen per type ──
+  [
+    'Houtwal bescherming',
+    1,
+    'Kleine houtwallen (<10 are, <20 bomen) zijn vrijgesteld van Wnb-meldingsplicht maar kunnen onder provinciaal beleid vallen',
+    'Houtwal: aarden wal met opgaande begroeiing, historisch perceelscheidend element. Beschermd als landschapselement in meerdere provincies (Overijssel, Gelderland, Drenthe). Bescherming via provinciale verordening natuur en landschap.',
+    'Bestuurlijke boete provincie. Herplantplicht of herstelinspanning. In Overijssel tot 10.000 EUR per overtreding.',
+    'Provinciale verordening natuur en landschap; Wnb art. 4.2',
+    'NL',
+  ],
+  [
+    'Singel en elzensingel bescherming',
+    1,
+    'Eenrijige singels met minder dan 20 bomen zijn vrijgesteld onder Wnb, maar provinciale regels kunnen strenger zijn',
+    'Singel: rij van bomen of struiken als perceelscheiding. Elzensingel: specifiek met zwarte els (Alnus glutinosa) langs sloten, kenmerkend voor Friese Wouden en Groninger landschap. Beschermd als landschapselement.',
+    'Boete bij ongeoorloofde verwijdering. Subsidie voor onderhoud via ANLb (Agrarisch Natuur- en Landschapsbeheer).',
+    'Provinciale verordening; ANLb subsidieregeling',
+    'NL',
+  ],
+  [
+    'Knotbomenrij bescherming',
+    1,
+    'Vrijstelling als minder dan 20 bomen en geen monumentale status',
+    'Knotbomenrij: bomen die periodiek geknot worden (wilg, es, els). Cultuurhistorisch landschapselement. Beschermd in meerdere provincies als onderdeel van het landschappelijk erfgoed. Onderhoud (knotten) is verplicht voor behoud subsidie.',
+    'Verlies subsidie bij verwaarlozing. Boete bij verwijdering van beschermde knotbomenrij.',
+    'Provinciale verordening; ANLb beheersubsidie',
+    'NL',
+  ],
+  [
+    'Houtopstand: definitie en afbakening',
+    0,
+    null,
+    'Houtopstand in de zin van Wnb art. 4.1: zelfstandige eenheid van bomen, boomvormers, struiken, hakhout of griend, niet zijnde beplanting van erven en tuinen. Minimaal 10 are of 20+ bomen in een rijbeplanting.',
+    null,
+    'Wet natuurbescherming art. 4.1 (definitie)',
+    'NL',
+  ],
+  // ── NEW: Bescherming per provincie ──
+  [
+    'Provinciale verordening Gelderland — houtopstanden',
+    1,
+    'Gelderland kent aanvullende regels via de Omgevingsverordening Gelderland voor landschapselementen in het Gelders Natuurnetwerk',
+    'In Gelderland geldt naast de Wnb ook de provinciale Omgevingsverordening. Beschermde landschapselementen (houtwallen, singels, lanen) in het Gelders Natuurnetwerk mogen niet zonder ontheffing worden verwijderd. Aparte compensatieplicht bovenop Wnb-herplantplicht.',
+    'Bestuurlijke boete provincie Gelderland. Aanvullende compensatieplicht in oppervlakte en kwaliteit.',
+    'Omgevingsverordening Gelderland; Wnb art. 4.2',
+    'NL',
+  ],
+  [
+    'Provinciale verordening Overijssel — groene dooradering',
+    1,
+    'Beperkte vrijstelling voor regulier onderhoud (dunning <20%, knotten) mits passend binnen beheerplan',
+    'Overijssel beschermt houtwallen, singels, boomgroepen en lanen als onderdeel van de groene dooradering. Vergunning vereist voor kap of verwijdering. Compensatie verplicht bij ontheffing.',
+    'Bestuurlijke boete tot 10.000 EUR. Herstelverplichting binnen 2 plantseizonen.',
+    'Omgevingsverordening Overijssel; Wnb art. 4.2',
+    'NL',
+  ],
+  [
+    'Provinciale verordening Friesland — elzensingels Friese Wouden',
+    1,
+    'Regulier onderhoud (knotten, periodiek terugzetten) is vrijgesteld mits binnen ANLb-beheerovereenkomst',
+    'Friesland kent bijzondere bescherming voor elzensingels in het Nationaal Landschap Noardlike Fryske Walden. Verwijdering verboden zonder ontheffing. ANLb-subsidie beschikbaar voor beheer (circa 200-350 EUR/ha/jaar).',
+    'Bestuurlijke boete. Terugvordering ANLb-subsidie bij niet-naleving beheerovereenkomst.',
+    'Omgevingsverordening Friesland; ANLb subsidieregeling',
+    'NL',
+  ],
+  // ── NEW: Groenblauwe dooradering ──
+  [
+    'Groenblauwe dooradering — subsidie en voorwaarden',
+    0,
+    null,
+    'Groenblauwe dooradering: netwerk van groene (houtwallen, singels, bosjes) en blauwe (sloten, poelen, beken) landschapselementen. Subsidie via ANLb (collectieve agrarische natuurverenigingen). Voorwaarden: minimaal 6 jaar beheerovereenkomst, beheerplan volgens ecologische normen, monitoring door collectief.',
+    'Geen boete maar verlies subsidie en terugvordering bij niet-naleving. Collectief kan deelnemer uitsluiten.',
+    'ANLb; Gemeenschappelijk Landbouwbeleid (GLB)',
+    'NL',
+  ],
+  // ── NEW: Verplichte herplant details ──
+  [
+    'Herplant — soortenkeuze en plantafstand',
+    1,
+    'Provincie kan afwijkende soortenkeuze voorschrijven bij herplant op andere locatie',
+    'Bij herplantplicht (Wnb art. 4.3) geldt: soortenkeuze in overleg met provincie, voorkeur inheems loofhout. Plantafstand afhankelijk van soort: eik 4-6 m, berk 3-4 m, beuk 5-7 m, els 2-3 m. Minimale plantkwaliteit: 2-jarig beworteld plantgoed. Aanplant in plantseizoen (november-maart).',
+    'Bij niet-nakoming: bestuursdwang. Provincie kan na 3 jaar zelf herplanten op kosten eigenaar.',
+    'Wet natuurbescherming art. 4.3; Besluit natuurbescherming',
+    'NL',
+  ],
+  [
+    'Herplant — controle en handhaving termijnen',
+    1,
+    'Verlenging herplanttermijn mogelijk bij zwaarwegend belang (max 1 jaar extra)',
+    'Controle op herplantplicht door provincie: inspectie na 3 jaar (einde herplanttermijn). Geslaagde herplant: minimaal 80% van geplante bomen moet aangeslagen zijn. Bij onvoldoende hergroei: aanvullende aanplant binnen 1 jaar. Provincie houdt register van uitstaande herplantverplichtingen.',
+    'Bestuursdwang na 3 jaar + 1 jaar hersteltermijn. Dwangsom per maand tot maximaal 50.000 EUR.',
+    'Wet natuurbescherming art. 4.3-4.4; Besluit natuurbescherming',
+    'NL',
+  ],
+  [
+    'Herplant — financiele compensatie (boscompensatie)',
+    1,
+    'Alleen mogelijk bij bewezen onmogelijkheid van fysieke herplant',
+    'Als fysieke herplant niet mogelijk is (bijv. door bestemmingswijziging), kan de provincie financiele compensatie opleggen. Storting in het provinciale groenfonds of landelijk Boscompensatiefonds. Bedrag gebaseerd op aanlegkosten vergelijkbaar bos: circa 15.000-25.000 EUR/ha inclusief beheer eerste 10 jaar.',
+    'Verplichting tot betaling. Bij niet-betaling: bestuursrechtelijke invordering.',
+    'Wet natuurbescherming art. 4.4; Provinciale beleidsregels compensatie',
+    'NL',
+  ],
+  [
+    'Beschermde boomsoorten — bijzondere status',
+    1,
+    'Geen vrijstelling voor beschermde soorten, ook niet bij noodkap (achteraf ontheffing vereist)',
+    'Sommige boomsoorten genieten extra bescherming via soortenbescherming (Wnb art. 3.1-3.5). Bomen met vleermuisverblijfplaatsen, nestelende roofvogels, of als standplaats van beschermde mossen/korstmossen vereisen quickscan ecologie voor kap. Essentaksterfte (Hymenoscyphus fraxineus) geeft geen automatische kapvrijstelling voor essen.',
+    'Boete tot 21.750 EUR per overtreding soortenbescherming. Strafrechtelijke vervolging mogelijk bij opzet.',
+    'Wet natuurbescherming art. 3.1-3.5; art. 4.2',
     'NL',
   ],
 ];
@@ -249,6 +366,155 @@ const fellingData: [string, number, number | null, number | null, string | null,
     'Wet op de economische delicten; Wet natuurbescherming',
     'NL',
   ],
+  // ── NEW: Kapvergunning per gemeente-type ──
+  [
+    'Kapvergunning stedelijk gebied',
+    1,
+    null,
+    null,
+    'In stedelijk gebied geldt doorgaans een lagere drempel voor de kapvergunning: stamomtrek >30 cm of stamdiameter >10 cm op 1,3 m hoogte. Sommige gemeenten (Amsterdam, Utrecht, Rotterdam) vereisen vergunning voor elke boom buiten eigen achtertuin.',
+    'Aanvraag via Omgevingsloket Online. Behandeltermijn 8 weken (regulier). Bezwaar- en beroepsmogelijkheid. Herplantplicht als voorwaarde in vergunning.',
+    'Bestuursdwang, boete per gemeentelijke APV (vaak 5.000-20.000 EUR). Last onder dwangsom bij herplantplicht.',
+    'Gemeentelijke APV; Omgevingswet',
+    'NL',
+  ],
+  [
+    'Kapvergunning landelijk gebied',
+    1,
+    null,
+    0.1,
+    'In landelijk gebied buiten de bebouwde kom geldt primair de Wnb-meldingsplicht. Gemeentelijke APV kan aanvullend gelden. Lagere handhavingsdruk dan stedelijk, maar provinciale controle op herplant.',
+    'Melding bij provincie via meldingsformulier. Aanvullend: check gemeentelijke kapverordening landelijk gebied. Sommige gemeenten hebben geen eigen kapverordening buiten de kom.',
+    'Wnb-boete tot 21.750 EUR. Gemeentelijke boete afhankelijk van APV.',
+    'Wet natuurbescherming art. 4.2; gemeentelijke APV',
+    'NL',
+  ],
+  // ── NEW: Noodkap procedures ──
+  [
+    'Noodkap na stormschade',
+    0,
+    null,
+    null,
+    'Bij stormschade (windkracht 9+) mag direct worden opgeruimd zonder voorafgaande melding. Achteraf melding bij provincie binnen 1 week. Herplantplicht blijft gelden. Bij grootschalige stormschade kan provincie generieke ontheffing van wachttijd verlenen.',
+    'Achteraf melden bij provincie. Fotodocumentatie stormschade bewaren. Geen wachttijd van 1 maand bij aantoonbare stormschade.',
+    null,
+    'Wet natuurbescherming art. 4.2; provinciale beleidsregels noodkap',
+    'NL',
+  ],
+  [
+    'Noodkap bij iepziekte (Ophiostoma)',
+    1,
+    null,
+    null,
+    'Iepziekte (Ophiostoma novo-ulmi) vereist snelle verwijdering om verspreiding te voorkomen. Veel gemeenten hebben een iepziekte-bestrijdingsplan. Versnelde procedure voor kap van besmette iepen.',
+    'Melding bij gemeente iepziekte-coordinator. Versnelde vergunning (vaak binnen 1-2 weken). Geen reguliere wachttijd bij bevestigde besmetting. Herplant met resistente iepsoort of alternatief loofhout.',
+    'Boete bij niet-melden van iepziekte: gemeentelijke APV. Dwangsom bij weigering kap van besmette boom.',
+    'Gemeentelijke APV; Plantenziektenwet',
+    'NL',
+  ],
+  [
+    'Noodkap bij essentaksterfte (Hymenoscyphus fraxineus)',
+    1,
+    null,
+    null,
+    'Essentaksterfte is een wijdverbreide schimmelziekte bij essen. Geen automatische kapvrijstelling. Beoordeling per boom: stabiliteit, fase van aantasting, locatie (langs weg = hogere urgentie). Collectieve kapmeldingen mogelijk bij grote aantallen.',
+    'Boomveiligheidscontrole (BVC) door gecertificeerd boomverzorger. Melding bij provincie voor bomen buiten bebouwde kom. Gemeentelijke vergunning voor bomen binnen bebouwde kom. Wachttijd kan verkort worden bij aantoonbaar veiligheidsrisico.',
+    'Reguliere boetes bij kap zonder melding/vergunning. Aansprakelijkheid eigenaar bij letsel door vallende takken (art. 6:174 BW).',
+    'Wet natuurbescherming art. 4.2; gemeentelijke APV; BW art. 6:174',
+    'NL',
+  ],
+  // ── NEW: Dunning regels ──
+  [
+    'Dunning boven 20% — meldingsplichtig',
+    1,
+    null,
+    null,
+    'Dunning boven 20% van het stamtal is meldingsplichtig als reguliere kap. Registreer het uitgangsstamtal en de dunningspercentage. Na dunning >20% geldt herplantplicht voor het verschil boven 20%.',
+    'Melding bij provincie conform reguliere procedure. Wachttijd 1 maand. Bosbeheerplan overleggen als onderbouwing.',
+    'Reguliere boete tot 21.750 EUR bij overtreding.',
+    'Wet natuurbescherming art. 4.2',
+    'NL',
+  ],
+  // ── NEW: Boscompensatie ──
+  [
+    'Boscompensatie — landelijk compensatiefonds',
+    1,
+    null,
+    null,
+    'Bij ontheffing van herplantplicht (art. 4.4 Wnb) kan de provincie storting in een compensatiefonds eisen. Provinciale groenfondsen of het landelijk Boscompensatiefonds (bij nationale projecten). Compensatiebedrag: circa 15.000-25.000 EUR/ha.',
+    'Aanvraag ontheffing herplantplicht bij Gedeputeerde Staten. Onderbouwing waarom fysieke herplant onmogelijk is. Afkoopbedrag wordt vastgesteld op basis van aanleg- en beheerkosten.',
+    'Verplichting tot betaling bij toekenning ontheffing. Bestuursrechtelijke invordering bij niet-betaling.',
+    'Wet natuurbescherming art. 4.4; Provinciale beleidsregels compensatie',
+    'NL',
+  ],
+  // ── NEW: Boswet-ontheffingen ──
+  [
+    'Ontheffing Wnb — woningbouw',
+    1,
+    null,
+    null,
+    'Ontheffing herplantplicht mogelijk bij woningbouwprojecten van zwaarwegend maatschappelijk belang. Voorwaarde: compensatie elders binnen de provincie. Aanvrager betaalt compensatiekosten.',
+    'Aanvraag bij Gedeputeerde Staten met bestemmingsplan, ruimtelijke onderbouwing, en compensatieplan. Behandeltermijn circa 13 weken.',
+    null,
+    'Wet natuurbescherming art. 4.4',
+    'NL',
+  ],
+  [
+    'Ontheffing Wnb — infrastructuur (rijkswegen, spoor)',
+    1,
+    null,
+    null,
+    'Bij aanleg of verbreding van rijkswegen of spoorwegen kan de minister ontheffing verlenen. Compensatie via het Kwaliteitsimpuls Natuur en Landschap of Boscompensatiefonds. Vaak 1:1 compensatie plus kwaliteitstoeslag.',
+    'Aanvraag via Rijkswaterstaat of ProRail bij het ministerie van LNV. Passende beoordeling Natura 2000 vaak ook vereist.',
+    null,
+    'Wet natuurbescherming art. 4.4; Tracewet',
+    'NL',
+  ],
+  [
+    'Ontheffing Wnb — natuurontwikkeling',
+    0,
+    null,
+    null,
+    'Omvorming van bos naar andere natuur (heide, stuifzand, moeras) kan worden vrijgesteld van herplantplicht als dit past binnen een goedgekeurd natuurbeheerplan. Geen netto verlies van natuur.',
+    'Aanvraag bij provincie met ecologische onderbouwing. Beheerplan moet zijn goedgekeurd. Monitoring verplicht.',
+    null,
+    'Wet natuurbescherming art. 4.4; Subsidieverordening Natuur en Landschap',
+    'NL',
+  ],
+  // ── NEW: Per boomsoort ──
+  [
+    'Beschermde boom — vleermuisverblijfplaats',
+    1,
+    null,
+    null,
+    'Bomen met vleermuisverblijfplaatsen (kraamkolonies, overwinteringsplaatsen) zijn extra beschermd via soortenbescherming (Wnb art. 3.5). Kap vereist ontheffing soortenbescherming naast kapmelding/vergunning. Vleermuisonderzoek (quickscan + nader onderzoek) verplicht.',
+    'Quickscan ecologie bij vermoeden vleermuizen. Nader onderzoek in actief seizoen (mei-september). Ontheffingsaanvraag bij RVO. Mitigerende maatregelen (vleermuiskasten) als voorwaarde.',
+    'Boete tot 21.750 EUR per overtreding soortenbescherming. Strafrechtelijke vervolging bij opzet (WED).',
+    'Wet natuurbescherming art. 3.5; art. 4.2',
+    'NL',
+  ],
+  [
+    'Exoten verwijdering — invasieve soorten',
+    0,
+    null,
+    null,
+    'Verwijdering van invasieve exoten (Amerikaanse vogelkers Prunus serotina, Amerikaanse eik Quercus rubra in natuurgebieden) wordt gestimuleerd door provincies. Geen meldingsplicht als verwijdering plaatsvindt in het kader van een goedgekeurd natuurbeheerplan.',
+    'Overleg met terreinbeheerder en provincie. Bij verwijdering buiten beheerplan geldt reguliere Wnb-procedure. Herplant met inheemse soorten aanbevolen.',
+    null,
+    'Wet natuurbescherming art. 4.2; EU-verordening 1143/2014 (invasieve exoten)',
+    'NL',
+  ],
+  [
+    'Bomen op erven — vrijstelling',
+    0,
+    null,
+    null,
+    'Bomen op erven bij woningen en bedrijfsgebouwen zijn uitgezonderd van de Wnb-meldingsplicht. Definitie erf: grond die functioneel bij de woning of het bedrijfsgebouw hoort (niet het landbouwperceel). Gemeentelijke APV kan alsnog kapvergunning vereisen.',
+    'Check gemeentelijke APV voor drempels (stamdiameter, boomsoort, aantal). Sommige gemeenten vereisen vergunning voor bomen >30 cm stamomtrek ook op erven.',
+    'Geen Wnb-boete. Gemeentelijke boete als APV-vergunningsplicht geldt.',
+    'Wet natuurbescherming art. 4.2 lid 3; gemeentelijke APV',
+    'NL',
+  ],
 ];
 
 for (const [scenario, lic, m3, ha, exemptions, process, penalties, ref, jur] of fellingData) {
@@ -343,6 +609,153 @@ const natura2000Data: [string, number, string, string | null, string, string][] 
     null,
     'NL',
   ],
+  // ── NEW: Wateronttrekking ──
+  [
+    'Wateronttrekking nabij Natura 2000',
+    1,
+    'Vergunning vereist bij grondwateronttrekking die effect kan hebben op grondwaterafhankelijke Natura 2000-habitats (vochtige heide, trilvenen, blauwgraslanden). Waterschap en provincie beoordelen gezamenlijk. AERIUS-berekening niet van toepassing, maar hydrologische effectbeoordeling verplicht.',
+    'Maximaal onttrekkingsdebiet, peilmonitoring, compenserende wateraanvoer, seizoensbeperkingen',
+    'Bestuurlijke boete waterschap. Dwangsom. Intrekking watervergunning bij herhaalde overtreding.',
+    'NL',
+  ],
+  // ── NEW: Bouw en sloop ──
+  [
+    'Bouwactiviteit nabij Natura 2000',
+    1,
+    'Vergunning vereist voor bouwactiviteiten (woningbouw, bedrijfsgebouwen, infrastructuur) nabij Natura 2000 als stikstofdepositie, geluidsverstoring, trillingen, of lichtverstoring mogelijk is. AERIUS-berekening voor bouwfase (tijdelijk) en gebruiksfase (structureel). Passende beoordeling bij overschrijding KDW.',
+    'Emissiearm bouwmaterieel (Stage V), bouwperiode buiten broedseizoen, geluidschermen, verlichting afgeschermd',
+    'Stillegging bouw, bestuurlijke boete, dwangsom per dag. Bouwvergunning kan worden ingetrokken.',
+    'NL',
+  ],
+  [
+    'Sloopactiviteit nabij Natura 2000',
+    1,
+    'Sloop kan stikstofdepositie veroorzaken door bouwmaterieel en stofemissie. AERIUS-berekening nodig als sloop >1 week duurt of zwaar materieel vereist. Asbesthoudende sloop vereist apart traject (asbestverwijdering).',
+    'Natte sloop (stofbeperking), werkperiode beperking, emissiearm materieel',
+    'Bestuurlijke boete, stillegging werkzaamheden',
+    'NL',
+  ],
+  // ── NEW: Begrazing intensivering ──
+  [
+    'Begrazing intensivering nabij Natura 2000',
+    1,
+    'Toename van begrazingsdruk (meer vee per hectare) nabij Natura 2000 kan leiden tot hogere ammoniakemissie en overbegrazing van habitattypen. Vergunning vereist als toename significant is. AERIUS-berekening voor ammoniakdepositie door extra vee.',
+    'Maximaal aantal dieren per hectare, seizoensbegrazing, afrastering Natura 2000-grens',
+    'Bestuurlijke boete, dwangsom, intrekking vergunning veehouderij',
+    'NL',
+  ],
+  // ── NEW: Drainage en ontgronding ──
+  [
+    'Drainage nabij Natura 2000',
+    1,
+    'Aanleg of verdieping van drainage nabij Natura 2000 met grondwaterafhankelijke habitats vereist vergunning. Effectbeoordeling op grondwaterstand en kwelstromen. Waterschap en provincie beoordelen gezamenlijk.',
+    'Maximale drainagediepte, monitoring grondwaterstanden, compenserende maatregelen',
+    'Bestuurlijke boete, herstelplicht (dempen drainage), dwangsom waterschap',
+    'NL',
+  ],
+  [
+    'Ontgronding nabij Natura 2000',
+    1,
+    'Ontgronding (zand-, grind-, of kleiwinning) nabij Natura 2000 vereist vergunning provincie (Ontgrondingenwet) plus Wnb-vergunning. Effectbeoordeling op hydrologisch systeem, bodemstabiliteit, en habitattypen. Passende beoordeling verplicht.',
+    'Afstand tot Natura 2000-grens, werkperiode, grondwatermonitoring, landschapsherstel na ontgronding',
+    'Bestuurlijke boete beide vergunningen. Herstelplicht. Illegale ontgronding: economisch delict.',
+    'NL',
+  ],
+  // ── NEW: Aanplant exoten ──
+  [
+    'Aanplant exoten nabij Natura 2000',
+    1,
+    'Aanplant van niet-inheemse boomsoorten of struiken nabij Natura 2000 kan effect hebben op habitats door verdringing van inheemse flora. Vergunning vereist als aanplant significante verspreiding naar Natura 2000-habitat kan veroorzaken. Invasieve exoten (EU-lijst) zijn verboden.',
+    'Soortenkeuze: alleen inheems binnen 500 m van Natura 2000. Monitoring op uitbreiding. Verwijderplicht bij ongewenste verspreiding.',
+    'Bestuurlijke boete, verwijderplicht op kosten aanplanter',
+    'NL',
+  ],
+  // ── NEW: Recreatie uitbreiding en evenementen ──
+  [
+    'Recreatie-uitbreiding nabij Natura 2000',
+    1,
+    'Uitbreiding van recreatieve voorzieningen (campings, golfbanen, parkeerterreinen, mountainbikeroutes) nabij Natura 2000 vereist vergunning als dit leidt tot meer verstoring (geluid, licht, betreding). Voortoets verplicht. Beheerplannen kunnen bestaande extensieve recreatie vrijstellen.',
+    'Seizoensbeperkingen, zonering (kernzone/bufferzone), maximale capaciteit, lichtbeperking',
+    'Bestuurlijke boete, stillegging uitbreiding, dwangsom',
+    'NL',
+  ],
+  [
+    'Evenementen in of nabij Natura 2000',
+    1,
+    'Eenmalige of terugkerende evenementen (festivals, motorcross, vuurwerk, drones) in of nabij Natura 2000 vereisen voortoets. Bij significant effect: passende beoordeling en vergunning. Geluids- en lichtverstoring zijn hoofdfactoren.',
+    'Maximale geluidsniveaus, afstand tot broedkolonies, tijdstip (niet tijdens broedseizoen), opruimplicht',
+    'Bestuurlijke boete bij evenement zonder vergunning. Last onder dwangsom bij herhaling.',
+    'NL',
+  ],
+  // ── NEW: Verlichting (vleermuizen) ──
+  [
+    'Verlichting nabij Natura 2000 — vleermuizen',
+    1,
+    'Kunstmatige verlichting nabij Natura 2000-gebieden met vleermuispopulaties (meervleermuis, laatvlieger, watervleermuis) vereist beoordeling. Lichtverstoring verstoort foerageerroutes en kolonie-uitvlieg. Vergunning soortenbescherming (Wnb art. 3.5) en/of gebiedsbescherming.',
+    'Vleermuisvriendelijke verlichting (amberkleur, <2700K, neerwaarts gericht), geen verlichting richting vliegroutes, uitschakeling na 23:00',
+    'Bestuurlijke boete soortenbescherming. Dwangsom per dag bij voortdurende overtreding.',
+    'NL',
+  ],
+  // ── NEW: ADC-toets ──
+  [
+    'ADC-toets (Alternatieven, Dwingende redenen, Compensatie)',
+    1,
+    'Als een passende beoordeling concludeert dat significante negatieve effecten op Natura 2000-gebieden niet kunnen worden uitgesloten, kan een vergunning alleen worden verleend via de ADC-toets: (A) geen Alternatieven beschikbaar, (D) Dwingende redenen van groot openbaar belang, (C) Compenserende maatregelen voldoende. Europese Commissie adviseert bij prioritaire habitats.',
+    'Compensatie: extra natuurareaal van vergelijkbare kwaliteit, voor aanvang project gerealiseerd. Financiele zekerheid voor langjarig beheer compensatienatuur.',
+    'Vergunning geweigerd als ADC-toets niet wordt gehaald. Bij illegale uitvoering: economisch delict, herstelplicht, boete.',
+    'NL',
+  ],
+  // ── NEW: Intern en extern salderen ──
+  [
+    'Intern salderen stikstofdepositie',
+    0,
+    'Intern salderen: nieuwe activiteit wordt gesaldeerd met bestaande vergunde activiteiten op hetzelfde bedrijf. Netto geen toename van stikstofdepositie. Sinds 2022 geen vergunningplicht voor intern salderen, maar wel melding bij provincie. AERIUS-berekening verplicht als bewijs.',
+    null,
+    'Geen boete bij correcte melding. Bij onjuiste berekening: risico dat vergunning achteraf ongeldig is.',
+    'NL',
+  ],
+  [
+    'Extern salderen stikstofdepositie',
+    1,
+    'Extern salderen: stikstofdepositieruimte overnemen van een ander bedrijf (dat stopt of inkrimpt). Afroming van 30% van de overgenomen ruimte. Alleen feitelijk gerealiseerde capaciteit mag worden gesaldeerd (niet slapende vergunningen). Provinciale beleidsregels bepalen voorwaarden.',
+    'Overeenkomst tussen saldogever en saldonemer, goedkeuring provincie, AERIUS-berekening, intrekking vergunning saldogever',
+    'Vergunning geweigerd bij onvoldoende onderbouwing. Illegale activiteit zonder extern salderen: economisch delict.',
+    'NL',
+  ],
+  // ── NEW: Beheerplannen procedure ──
+  [
+    'Beheerplan Natura 2000 — procedure en inhoud',
+    0,
+    'Beheerplan wordt opgesteld door de provincie (of Rijkswaterstaat voor grote wateren) in overleg met grondeigenaren, gebruikers, en belangenorganisaties. Inhoud: (1) beschrijving instandhoudingsdoelen per habitat en soort, (2) huidige staat van instandhouding, (3) benodigde maatregelen, (4) lijst van vrijgestelde activiteiten, (5) monitoring en evaluatie. Looptijd 6 jaar met evaluatie en herziening.',
+    null,
+    null,
+    'NL',
+  ],
+  [
+    'Beheerplan Natura 2000 — participatie en bezwaar',
+    0,
+    'Ontwerp-beheerplan ligt 6 weken ter inzage. Zienswijzen mogelijk. Definitief beheerplan vatbaar voor beroep bij de rechter. Grondeigenaren en gebruikers worden betrokken via klankbordgroepen. Provinciale Staten stellen het beheerplan vast.',
+    null,
+    null,
+    'NL',
+  ],
+  // ── NEW: Ruimtelijke ingrepen soortenbescherming ──
+  [
+    'Ontheffing soortenbescherming — ruimtelijke ingrepen',
+    1,
+    'Bij ruimtelijke ingrepen (bouw, kap, grondverzet) die beschermde dier- of plantensoorten verstoren, is een ontheffing Wnb art. 3.3/3.5 vereist. Aanvraag bij RVO. Drie criteria: (1) geen andere bevredigende oplossing, (2) dwingende redenen van groot openbaar belang of volksgezondheid, (3) geen afbreuk aan gunstige staat van instandhouding.',
+    'Mitigatieplan, ecologisch werkprotocol, compensatie leefgebied, monitoring na ingreep (minimaal 3 jaar)',
+    'Boete tot 21.750 EUR per overtreding. Strafrechtelijke vervolging bij opzet of grove nalatigheid.',
+    'NL',
+  ],
+  [
+    'Gedragscodes soortenbescherming',
+    0,
+    'Gedragscodes (goedgekeurd door minister van LNV) bieden een generieke vrijstelling van de verbodsbepalingen soortenbescherming voor specifieke werkzaamheden. Voorbeelden: Gedragscode Bosbeheer, Gedragscode Bestendig Beheer en Onderhoud. Bij werken volgens de gedragscode is geen individuele ontheffing nodig. Wel quickscan verplicht.',
+    null,
+    'Bij niet-naleving gedragscode: terugval op individuele ontheffingsplicht. Boete bij overtreding verbodsbepalingen.',
+    'NL',
+  ],
 ];
 
 for (const [op, consent, process, conditions, penalties, jur] of natura2000Data) {
@@ -420,6 +833,76 @@ const rowData: [string, string, number, string | null, string, string, string][]
     'Illegale afsluiting: bestuursdwang gemeente. Strafrechtelijke handhaving bij gevaarlijke situatie.',
     'NL',
   ],
+  // ── NEW: Dijkpad ──
+  [
+    'Dijkpad',
+    'Pad langs of op een waterkering (dijk). Beheer door waterschap. Veel dijkpaden zijn openbaar toegankelijk voor wandelen en fietsen. Berijden met motorvoertuigen niet toegestaan tenzij specifiek aangewezen.',
+    2.5,
+    'Geen activiteiten die de waterkering verzwakken: geen graafwerk, geen zware voertuigen, geen verankering. Waterschap stelt gebruiksregels vast in de keur.',
+    'Waterschap kan direct handhaven bij schade aan waterkering. Spoedherstel vereist.',
+    'Overtreding keur waterschap: bestuurlijke boete. Beschadiging waterkering: strafbaar feit (Waterwet). Waterschap kan bestuursdwang opleggen.',
+    'NL',
+  ],
+  // ── NEW: Kerkepad ──
+  [
+    'Kerkepad',
+    'Historisch voetpad (vaak onverhard) dat oorspronkelijk leidde naar de dorpskerk. Veel kerkepaden zijn verloren gegaan maar worden heropend via klompenpadprojecten. Status afhankelijk van Wegenlegger gemeente: openbaar of privaat.',
+    1.0,
+    'Geen bebouwing of afsluiting als pad op de Wegenlegger staat als openbaar pad. Aanliggende eigenaar moet doorgang gedogen.',
+    'Gemeente kan pad opnemen in Wegenlegger na verzoek. Procedure via raadsbesluit. Bezwaar door grondeigenaar mogelijk.',
+    'Afsluiting openbaar kerkepad: bestuursdwang gemeente. Verwijdering van pad uit Wegenlegger vereist raadsbesluit.',
+    'NL',
+  ],
+  // ── NEW: Schoolpad ──
+  [
+    'Schoolpad',
+    'Historisch pad naar school, vergelijkbaar met kerkepad. Status bepaald door Wegenlegger. Veel schoolpaden zijn verdwenen door ruilverkaveling. Heropening mogelijk via gemeentelijk besluit.',
+    1.2,
+    'Geen blokkade door grondeigenaar als pad openbaar is. Gemeente verantwoordelijk voor onderhoud als het pad op de Wegenlegger staat.',
+    'Herstel door gemeente na melding. Geen specifieke wettelijke hersteltermijn maar zorgplicht gemeente.',
+    'Illegale afsluiting: bestuursdwang gemeente. Strafrechtelijk: art. 427 Wetboek van Strafrecht.',
+    'NL',
+  ],
+  // ── NEW: Openbaar vs privaat — Wegenwet ──
+  [
+    'Openbaar pad — Wegenwet (status en bewijs)',
+    'Pad is openbaar als: (a) opgenomen in Wegenlegger gemeente, (b) 30 jaar onafgebroken openbaar toegankelijk en door gemeente onderhouden, of (c) 10 jaar openbaar met onderhoud door rechthebbende. Wegenwet art. 4. Bewijs: Wegenlegger is hoofdbewijs. Privaat pad wordt niet automatisch openbaar door feitelijk gebruik.',
+    0,
+    null,
+    'Opname in Wegenlegger via procedure bij gemeente (raadsbesluit). Bezwaar door rechthebbende binnen 6 weken. Beroep bij rechtbank.',
+    'Gemeente verantwoordelijk voor onderhoud openbaar pad. Rechthebbende privépad heeft geen onderhoudsplicht jegens publiek. Afsluiting openbaar pad: strafbaar (art. 427 Sr).',
+    'NL',
+  ],
+  // ── NEW: Onderhoud — wie betaalt ──
+  [
+    'Onderhoud openbaar pad — verantwoordelijkheid en kosten',
+    'Wegbeheerder (gemeente, provincie, of waterschap) is verantwoordelijk voor onderhoud van openbare paden. Kosten ten laste van beheerder. Aanliggende eigenaren hebben geen wettelijke onderhoudsplicht maar mogen ook niet belemmeren. Bij gebrekkig onderhoud: aansprakelijkheid wegbeheerder (art. 6:174 BW).',
+    0,
+    'Aanliggende eigenaar moet overhangende takken en wortels verwijderen als deze het pad belemmeren (art. 5:44 BW). Kosten voor eigenaar. Gemeente kan last onder bestuursdwang opleggen.',
+    'Herstel na melding: geen wettelijke termijn, maar zorgplicht. Bij gevaar: direct handelen. Aansprakelijkheidsclaim bij letsel door gebrekkig onderhoud (art. 6:174 BW).',
+    'Gemeente/waterschap draagt kosten. Bij ernstig letsel door gebrekkig onderhoud: schadevergoeding aan slachtoffer.',
+    'NL',
+  ],
+  // ── NEW: Toegankelijkheid ──
+  [
+    'Toegankelijkheid openbaar pad — mobiliteit en hekken',
+    'Openbare paden moeten toegankelijk zijn voor alle gebruikers. Plaatsing van hekken, klaphekken, of overstapjes op openbare paden is alleen toegestaan met toestemming wegbeheerder. Overstapjes (stiles) en klaphekken moeten passeerbaar zijn voor minder validen waar redelijkerwijs mogelijk (VN-Verdrag rechten personen met een handicap).',
+    1.5,
+    'Minimale doorgang bij hekken: 0,9 m (rolstoeltoegankelijk). Klaphekken: zelfsluitend, bediening met een hand. Overstapjes: waar mogelijk vervangen door klaphek of poort. Wegbeheerder bepaalt.',
+    'Geen specifieke hersteltermijn. Gemeente kan overleggen met grondeigenaar over aanpassing.',
+    'Illegale blokkade (inclusief te smal hekwerk): bestuursdwang gemeente. Discriminatie op grond van handicap: klacht via College voor de Rechten van de Mens.',
+    'NL',
+  ],
+  // ── NEW: Trekkerpad ──
+  [
+    'Trekkerpad (trekkersveld/trekkersroute)',
+    'Langeafstandswandelroute met overnachtingsmogelijkheden (trekkersvelden). Beheer door Staatsbosbeheer of Natuurmonumenten. Paden veelal door natuurgebieden met specifieke toegangsregels.',
+    1.5,
+    'Alleen wandelen op aangewezen paden. Kamperen alleen op trekkersvelden. Vuur niet toegestaan buiten aangewezen plekken. Honden aangelijnd.',
+    'Geen wettelijke hersteltermijn. Beheerder bepaalt onderhoudsniveau.',
+    'Overtreding toegangsregels: boete via APV of Wet natuurbescherming. BOA bevoegd. Schade aan natuur: schadeclaim beheerder.',
+    'NL',
+  ],
 ];
 
 for (const [pathType, obligation, width, cropping, reinstatement, obstruction, jur] of rowData) {
@@ -481,6 +964,150 @@ const commonData: [string, number, string, string, string][] = [
     1,
     'Grondkamer / Pachtkamer (rechtbank)',
     'Opzegging reguliere pacht alleen via Grondkamer. Gronden voor opzegging: eigen gebruik door verpachter, slecht pachterschap, bestemmingswijziging. Opzegtermijn minimaal 3 jaar voor hoevepacht, 1 jaar voor los land. Pachter kan in beroep bij Pachtkamer van het gerechtshof.',
+    'NL',
+  ],
+  // ── NEW: Alle 14 pachtprijsgebieden met normen ──
+  [
+    'Pachtprijsgebied 1: Bouwhoek en Hogeland',
+    0,
+    'RVO',
+    'Bouwhoek en Hogeland (Groningen): akkerbouwgebied met kleigrond. Pachtnorm circa 800 EUR/ha. Voornamelijk graan, aardappelen, suikerbieten. Hoge bodemkwaliteit.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 2: Veenkoloniën en Oldambt',
+    0,
+    'RVO',
+    'Veenkoloniën en Oldambt (Groningen/Drenthe): dalgrond en klei. Pachtnorm circa 650 EUR/ha. Akkerbouw (zetmeelaardappelen, graan). Lagere norm door mindere bodemkwaliteit.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 3: Noordelijk weidegebied',
+    0,
+    'RVO',
+    'Noordelijk weidegebied (Friesland/Groningen): grasland voor melkveehouderij. Pachtnorm circa 750 EUR/ha. Klei- en veengrond. Overwegend weidebouw.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 4: Oostelijk veehouderijgebied',
+    0,
+    'RVO',
+    'Oostelijk veehouderijgebied (Overijssel/Gelderland): gemengd bedrijf met grasland en mais. Pachtnorm circa 700 EUR/ha. Zandgrond. Intensieve veehouderij en akkerbouw.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 5: Centraal veehouderijgebied',
+    0,
+    'RVO',
+    'Centraal veehouderijgebied (Utrecht/Gelderland): grasland voor rundveehouderij. Pachtnorm circa 750 EUR/ha. Rivierklei en zandgrond. Hoge gronddruk door nabijheid Randstad.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 6: IJsselmeerpolders',
+    0,
+    'RVO',
+    'IJsselmeerpolders (Flevoland): jonge zeekleigrond, hoogproductief akkerbouwgebied. Pachtnorm circa 900 EUR/ha (hoogste van Nederland). Aardappelen, suikerbieten, graan, uien. Grote kavels.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 7: Westelijk Holland',
+    0,
+    'RVO',
+    'Westelijk Holland (Zuid-Holland/Noord-Holland): bollenteelt, tuinbouw, glastuinbouw. Pachtnorm circa 600 EUR/ha. Hoge grondprijzen maar lage pachtnormen door veengrond en stedelijke druk.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 8: Waterland en Droogmakerijen',
+    0,
+    'RVO',
+    'Waterland en Droogmakerijen (Noord-Holland): veenweidegebied met bodemdaling. Pachtnorm circa 400 EUR/ha (laagste van Nederland). Extensieve veehouderij, weidevogelbeheer. Beperkte draagkracht bodem.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 9: Hollandse/Utrechtse waarden',
+    0,
+    'RVO',
+    'Hollands/Utrechts weidegebied: rivierklei en veengrond. Pachtnorm circa 700 EUR/ha. Grasland voor melkveehouderij. Uiterwaarden: overstromingrisico beperkt intensief gebruik.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 10: Rivierengebied',
+    0,
+    'RVO',
+    'Rivierengebied (Gelderland/Zuid-Holland): vruchtbare rivierklei. Pachtnorm circa 750 EUR/ha. Akkerbouw en fruitteelt (Betuwe). Uiterwaarden onder Natura 2000-bescherming.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 11: Zuidwestelijk akkerbouwgebied',
+    0,
+    'RVO',
+    'Zuidwestelijk akkerbouwgebied (Zeeland/Zuid-Holland): zeekleigrond, akkerbouw. Pachtnorm circa 800 EUR/ha. Aardappelen, graan, suikerbieten, uien. Grote bedrijven.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 12: Zuidelijk veehouderijgebied',
+    0,
+    'RVO',
+    'Zuidelijk veehouderijgebied (Noord-Brabant/Limburg): zandgrond, intensieve veehouderij. Pachtnorm circa 750 EUR/ha. Hoge mestdruk, veel glastuinbouw. Stikstofproblematiek prominent.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 13: Zuid-Limburg',
+    0,
+    'RVO',
+    'Zuid-Limburg: lossgrond (vruchtbare leemgrond). Pachtnorm circa 700 EUR/ha. Akkerbouw (graan, suikerbieten). Heuvelland met erosieproblematiek. Kleinschalig landschap.',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebied 14: Overig Noord-Holland',
+    0,
+    'RVO',
+    'Overig Noord-Holland (boven het IJ): klei- en zavelgrond. Pachtnorm circa 650 EUR/ha. Akkerbouw (pootaardappelen, bloembollen), grasland. Droogmakerijen en polders.',
+    'NL',
+  ],
+  // ── NEW: Pachtcontract inhoud en geschillen ──
+  [
+    'Pachtcontract — verplichte inhoud',
+    1,
+    'Grondkamer',
+    'Reguliere pachtovereenkomst moet schriftelijk en bevat: partijen, kadastrale aanduiding, oppervlakte, pachtprijs, ingangsdatum, duur, bestemming (landbouw). Grondkamer toetst op: redelijke pachtprijs (niet boven regionorm), billijke voorwaarden, geen strijd met de wet. Mondelinge pachtovereenkomst is nietig sinds 2007.',
+    'NL',
+  ],
+  [
+    'Tussentijdse beeindiging pacht',
+    1,
+    'Grondkamer / Pachtkamer',
+    'Tussentijdse beeindiging reguliere pacht alleen in uitzonderingsgevallen: (1) wederzijds goedvinden (schriftelijk), (2) wanprestatie pachter (ernstige verwaarlozing), (3) bestemmingswijziging (onteigening). Grondkamer behandelt verzoek. Pachter heeft recht op schadevergoeding bij vroegtijdige beeindiging door verpachter.',
+    'NL',
+  ],
+  [
+    'Geschillenbeslechting — Grondkamer en Pachthof',
+    1,
+    'Grondkamer (eerste aanleg) / Pachthof Arnhem (hoger beroep)',
+    'Pachtgeschillen worden behandeld door de Grondkamer (regionale kamers bij RVO). Hoger beroep bij het Pachthof (onderdeel van Gerechtshof Arnhem-Leeuwarden). Geschillen over: pachtprijs, onderhoud, opzegging, medepacht, indeplaatsstelling. Procedure: verzoekschrift bij Grondkamer, zitting, uitspraak. Griffierecht circa 100-500 EUR.',
+    'NL',
+  ],
+  // ── NEW: Erfpacht details ──
+  [
+    'Erfpacht — canon berekening',
+    1,
+    'Kadaster; notariele akte',
+    'Canon (jaarlijkse vergoeding) wordt berekend op basis van grondwaarde en rendementspercentage (vaak 2-5%). Bij eeuwigdurende erfpacht: canon periodiek herzien (elke 10, 25, of 50 jaar). Bij tijdelijke erfpacht (bijv. 99 jaar): canon vast of geindexeerd. Herziening geschiedt door drie deskundigen of conform erfpachtvoorwaarden. Gemeentelijke erfpacht (Amsterdam, Den Haag, Leiden) kent eigen canonberekeningsregels.',
+    'NL',
+  ],
+  [
+    'Erfpacht — eeuwigdurend vs tijdelijk',
+    1,
+    'Kadaster',
+    'Eeuwigdurende erfpacht: loopt onbeperkt, canon periodiek herzien, erfpachter kan niet worden verplicht grond te verlaten behalve bij ernstige verwaarlozing. Tijdelijke erfpacht: bepaalde duur (vaak 50 of 99 jaar), na afloop terugkeer grond naar eigenaar, erfpachter heeft recht op vergoeding voor aangebrachte verbeteringen. Omzetting van tijdelijk naar eeuwigdurend: via overeenkomst met grondeigenaar, vaak tegen afkoopsom.',
+    'NL',
+  ],
+  // ── NEW: Verpachtersonderhoud ──
+  [
+    'Verpachtersonderhoud en pachterslasten',
+    1,
+    'Grondkamer',
+    'Verpachter draagt groot onderhoud (drainage, waterbeheersing, gebouwen). Pachter draagt klein onderhoud en dagelijks gebruik. Grondkamer kan geschil over onderhoudsverdeling beslechten. Bij hoevepacht: verpachter verantwoordelijk voor woonhuis en bedrijfsgebouwen. Pachter mag geen ingrijpende veranderingen aanbrengen zonder toestemming verpachter.',
     'NL',
   ],
 ];
@@ -569,6 +1196,129 @@ const plantingData: [string, string, number | null, number, string, number, stri
     0,
     'NL',
   ],
+  // ── NEW: Bossenstrategie details ──
+  [
+    'Bossenstrategie 2030 — bos binnen NNN',
+    'Gemengd (klimaatbestendig)',
+    5.0,
+    1,
+    'Bosaanleg binnen het Natuur Netwerk Nederland (NNN, voorheen EHS): circa 15.000 ha van de 37.000 ha doelstelling. Hogere subsidie (tot 7.000 EUR/ha). Voorkeur voor ecologische verbindingszones. Provincies kopen grond op of sluiten overeenkomsten met grondeigenaren.',
+    0,
+    'NL',
+  ],
+  [
+    'Bossenstrategie 2030 — bos buiten NNN',
+    'Gemengd (productie + biodiversiteit)',
+    1.0,
+    0,
+    'Bosaanleg buiten NNN: circa 22.000 ha. Combinatie met landbouw (agroforestry), langs wegen, in stedelijk gebied (tiny forests). Lagere subsidie (2.000-4.000 EUR/ha). Minder strikte soorteisen maar inheems loofhout aanbevolen.',
+    0,
+    'NL',
+  ],
+  // ── NEW: Subsidie bosaanleg per provincie ──
+  [
+    'Subsidie bosaanleg — Gelderland',
+    'Inheems loofhout',
+    0.5,
+    0,
+    'Provincie Gelderland: subsidie bosaanleg via Subsidieregeling Vitaal Gelderland. Circa 3.000-5.000 EUR/ha voor loofhout, 2.000-3.000 EUR/ha voor gemengd bos. Aanvullende subsidie voor landschapselementen (houtwallen, singels). Aanvraag via provincieloket.',
+    0,
+    'NL',
+  ],
+  [
+    'Subsidie bosaanleg — Noord-Brabant',
+    'Gemengd (klimaatbestendig)',
+    1.0,
+    0,
+    'Provincie Noord-Brabant: subsidie via Subsidieregeling Natuur Noord-Brabant. Circa 3.500-6.000 EUR/ha voor bosaanleg. Extra premie voor bosaanleg in stikstofgevoelige gebieden. Focus op klimaatbos (gemengd, inheems). Grondverwerving door provincie of via Brabants Landschap.',
+    0,
+    'NL',
+  ],
+  // ── NEW: Klimaatbestendig sortiment ──
+  [
+    'Soortenkeuze klimaatbestendig — toekomstbomen',
+    'Klimaatbestendig sortiment',
+    null,
+    0,
+    'Klimaatscenario\'s (KNMI 2023) vereisen aanpassing soortenkeuze. Toekomstbomen: wintereik (droogteresistent), zoete kers (Prunus avium), tamme kastanje (Castanea sativa), elsbes (Sorbus torminalis), winterlinde (Tilia cordata). Vermijden: beuk (droogtegevoelig op zandgrond), fijnspar (borkevergevoelig). Stichting Probos en Staatsbosbeheer publiceren sortimentsadviezen.',
+    0,
+    'NL',
+  ],
+  [
+    'Soortenkeuze — productiebos',
+    'Productiehout (douglas, lariks, populier, eik)',
+    2.0,
+    0,
+    'Productiebos voor duurzame houtoogst. Douglasspar (Pseudotsuga menziesii): hoogwaardig constructiehout, 60-80 jaar omlooptijd. Lariks: duurzaam hout zonder behandeling. Populier: snelgroeiend, 20-30 jaar omlooptijd, verpakkingshout. Eik: langzaam, hoogwaardig, 120+ jaar. FSC/PEFC-certificering aanbevolen. Subsidie productiebos lager dan biodiversiteitsbos.',
+    0,
+    'NL',
+  ],
+  // ── NEW: Agroforestry varianten ──
+  [
+    'Voedselbos (food forest)',
+    'Meerlagig (boom, struik, kruid, bodembedekker)',
+    0.25,
+    0,
+    'Voedselbos: meerlagig systeem van eetbare gewassen (noten, fruit, bessen, kruiden). Geen subsidie als landbouwgrond (telt als natuur). GLB eco-regeling mogelijk als agroforestry-element. Stichting Voedselbosbouw adviseert. Circa 10.000-20.000 EUR/ha aanlegkosten. Geen kapvergunning nodig voor oogst.',
+    0,
+    'NL',
+  ],
+  [
+    'Silvopasture (bomen met begrazing)',
+    'Loofhout (eik, wilg, els) met grasland',
+    1.0,
+    0,
+    'Silvopasture: combinatie van bomen met veeweiden. Bomen bieden schaduw (dierwelzijn), windluwte, en extra inkomen (hout, noten). GLB eco-regeling: circa 200-300 EUR/ha/jaar. Boomkeuze: eik, wilg, els (bestand tegen vraat). Bescherming jonge bomen met boomkokers of afrastering nodig. Maximaal 100 bomen/ha voor behoud graslandsubsidie.',
+    0,
+    'NL',
+  ],
+  [
+    'Silvoarable (bomen met akkerbouw)',
+    'Rijenbeplanting (walnoot, populier, kers)',
+    2.0,
+    0,
+    'Silvoarable: bomenrijen op akkerbouwpercelen. Bomen in rijen op 25-50 m afstand, gewassen ertussen. Walnoot en populier meest gangbaar. GLB eco-regeling: circa 200-400 EUR/ha/jaar. Aanlegsubsidie: circa 1.500-3.000 EUR/ha. Geen kapverordening voor geoogste bomen (bedrijfsmatige teelt). Opbrengstverlies akkerbouw circa 10-15% gecompenseerd door boomopbrengst op termijn.',
+    0,
+    'NL',
+  ],
+  [
+    'Agroforestry — regelgeving en perceelstatus',
+    'Gemengd',
+    null,
+    0,
+    'Agroforestry-percelen met >50 bomen/ha of >20% kroonbedekking tellen als bos (Wnb). Gevolg: meldingsplicht bij kap, herplantplicht. GLB-betaalrechten alleen bij <100 bomen/ha op grasland of <50 bomen/ha op bouwland. RVO beoordeelt perceelstatus per luchtfoto. Omzetting landbouwgrond naar bos is definitief (geen terugzetting zonder ontheffing).',
+    0,
+    'NL',
+  ],
+  // ── NEW: Bosbeheer ──
+  [
+    'Bosbeheer — kap en verjonging',
+    'Inheems (natuurlijke verjonging prioriteit)',
+    null,
+    0,
+    'Kaalkap van <0,5 ha is regulier bosbeheer (geen meldingsplicht als herplant volgt). Schermkap en groepenkap stimuleren natuurlijke verjonging. Gedragscode Bosbeheer biedt vrijstelling soortenbescherming bij werken volgens protocol. Rijksbijdrage bosbeheer via SNL: circa 50-100 EUR/ha/jaar.',
+    0,
+    'NL',
+  ],
+  [
+    'Bosbeheer — hakhout en middenbos',
+    'Inheems loofhout (eik, es, hazelaar, els)',
+    null,
+    0,
+    'Hakhout: periodiek afzetten (cyclus 7-25 jaar) van loofhout dat weer uitloopt. Traditioneel bosbeheer, bevordert biodiversiteit. Middenbos: combinatie van hakhout (onderlaag) met overstaanders (bovenlaag). Subsidie via SNL beheertype N16.01 (droog bos met productie). Geen herplantplicht bij regulier hakhoutbeheer.',
+    0,
+    'NL',
+  ],
+  // ── NEW: Bosbrandpreventie ──
+  [
+    'Bosbrandpreventie — risicogebieden en maatregelen',
+    'Naaldhout en gemengd',
+    null,
+    0,
+    'Risicogebieden: Veluwe, Noord-Brabant (zandgronden met naaldbos), Drenthe. Natuurbrandrisico neemt toe door klimaatverandering en droogte. Maatregelen: brandstroken (10-30 m breed), laubholzstreifen (loofhoutstrook als brandrem), waterpunten voor blushelikopters, rookverbod (1 april-1 november in bos). Veiligheidsregio bepaalt natuurbrandrisicoclassificatie. Beheersubsidie voor preventieve maatregelen via provincie.',
+    0,
+    'NL',
+  ],
 ];
 
 for (const [purpose, species, minArea, eia, grant, buffer, jur] of plantingData) {
@@ -623,6 +1373,27 @@ const tpoData: [string, number, string, string | null, string | null, string | n
     'Wet ruimtelijke ordening; Omgevingswet (per 2024)',
     'NL',
   ],
+  // ── NEW: Extra TPO entries ──
+  [
+    'Bomenverordening versus APV',
+    1,
+    'Gemeente',
+    null,
+    'Sommige gemeenten hebben een aparte Bomenverordening naast de APV. De Bomenverordening bevat specifieke regels voor beschermde bomen, monumentale-bomenlijst, herplantplicht, en schadevergoeding. Andere gemeenten regelen alles via de APV.',
+    'Boete per verordening. Variatie per gemeente: 5.000-25.000 EUR.',
+    'Gemeentelijke Bomenverordening; APV',
+    'NL',
+  ],
+  [
+    'Waardebepaling monumentale boom',
+    0,
+    'Gemeente / taxateur',
+    null,
+    'Waarde van een monumentale boom wordt bepaald via de NVTB-methode (Nederlandse Vereniging van Taxateurs van Bomen). Factoren: stamomtrek, soort, conditie, levensverwachting, beeldbepalende waarde, cultuurhistorie. Waarde kan oplopen tot 50.000-100.000 EUR voor oude eiken of beuken. Schadeclaim bij illegale kap gebaseerd op deze waarde.',
+    null,
+    'NVTB-methode; gemeentelijke APV',
+    'NL',
+  ],
 ];
 
 for (const [scenario, consent, authority, exemptions, process, penalties, ref, jur] of tpoData) {
@@ -674,6 +1445,30 @@ const ftsData: [string, string, string, string][] = [
     'hedgerow',
     'NL',
   ],
+  [
+    'Landschapselementen per type: houtwal singel elzensingel knotbomenrij',
+    'Beschermde landschapselementen: houtwallen (aarden wal met opgaande begroeiing), singels (rij bomen als perceelscheiding), elzensingels (zwarte els langs sloten, kenmerkend Friese Wouden), knotbomenrijen (periodiek geknot, cultuurhistorisch). Bescherming via provinciale verordening en ANLb-subsidie.',
+    'hedgerow',
+    'NL',
+  ],
+  [
+    'Provinciale bescherming landschapselementen',
+    'Provincies (Gelderland, Overijssel, Friesland) hebben aanvullende regels voor bescherming van landschapselementen bovenop de Wet natuurbescherming. Omgevingsverordening per provincie bepaalt beschermde elementen, vergunningplicht, en compensatieverplichtingen.',
+    'hedgerow',
+    'NL',
+  ],
+  [
+    'Groenblauwe dooradering subsidie voorwaarden',
+    'Groenblauwe dooradering: netwerk van groene (houtwallen, singels) en blauwe (sloten, poelen) landschapselementen. Subsidie via ANLb, minimaal 6 jaar beheerovereenkomst, beheerplan volgens ecologische normen, monitoring door agrarisch collectief.',
+    'hedgerow',
+    'NL',
+  ],
+  [
+    'Herplant soortenkeuze plantafstand controle',
+    'Bij herplantplicht: soortenkeuze in overleg met provincie (voorkeur inheems loofhout). Plantafstand per soort: eik 4-6 m, berk 3-4 m, beuk 5-7 m. Controle na 3 jaar: 80% moet aangeslagen zijn. Financiele compensatie (15.000-25.000 EUR/ha) als fysieke herplant onmogelijk.',
+    'hedgerow',
+    'NL',
+  ],
 
   // Felling
   [
@@ -703,6 +1498,36 @@ const ftsData: [string, string, string, string][] = [
   [
     'Noodkap gevaarlijke boom',
     'Bij direct gevaar voor personen of gebouwen mag een boom zonder voorafgaande vergunning worden geveld (noodkap). Achteraf melden bij gemeente of provincie. Herplantplicht blijft gelden. Fotodocumentatie bewaren als bewijs.',
+    'felling',
+    'NL',
+  ],
+  [
+    'Kapvergunning stedelijk versus landelijk gebied',
+    'In stedelijk gebied lagere kapdrempel (stamomtrek >30 cm). In landelijk gebied primair Wnb-meldingsplicht bij provincie. Gemeentelijke APV kan aanvullend gelden in beide gevallen. Amsterdam, Utrecht, Rotterdam vereisen vergunning voor bijna elke boom.',
+    'felling',
+    'NL',
+  ],
+  [
+    'Noodkap bij iepziekte en essentaksterfte',
+    'Iepziekte (Ophiostoma): snelle verwijdering nodig, versnelde vergunningprocedure via gemeentelijke iepziekte-coordinator. Essentaksterfte (Hymenoscyphus): geen automatische vrijstelling, beoordeling per boom op stabiliteit. Beide: herplantplicht blijft gelden.',
+    'felling',
+    'NL',
+  ],
+  [
+    'Boscompensatie financieel compensatiefonds',
+    'Bij onmogelijkheid fysieke herplant: storting in provinciaal groenfonds of landelijk Boscompensatiefonds. Compensatiebedrag circa 15.000-25.000 EUR/ha inclusief beheer eerste 10 jaar. Aanvraag bij Gedeputeerde Staten.',
+    'felling',
+    'NL',
+  ],
+  [
+    'Boswet-ontheffingen woningbouw infrastructuur natuur',
+    'Ontheffing herplantplicht bij: woningbouw (compensatie elders), infrastructuur (Boscompensatiefonds), natuurontwikkeling (omvorming bos naar heide/moeras mits in goedgekeurd beheerplan). Aanvraag bij Gedeputeerde Staten of minister van LNV.',
+    'felling',
+    'NL',
+  ],
+  [
+    'Beschermde boomsoorten exoten vleermuizen',
+    'Bomen met vleermuisverblijfplaatsen extra beschermd (Wnb art. 3.5): ontheffing soortenbescherming naast kapmelding vereist. Invasieve exoten (Prunus serotina, Quercus rubra): verwijdering gestimuleerd, geen meldingsplicht in goedgekeurd beheerplan.',
     'felling',
     'NL',
   ],
@@ -738,6 +1563,42 @@ const ftsData: [string, string, string, string][] = [
     'sssi',
     'NL',
   ],
+  [
+    'Wateronttrekking drainage ontgronding nabij Natura 2000',
+    'Grondwateronttrekking, drainage-aanleg, en ontgronding (zand/grind/klei) nabij Natura 2000 vereisen vergunning als hydrologisch effect verwacht. Waterschap en provincie beoordelen gezamenlijk. Ontgronding ook Ontgrondingenwet-vergunning nodig.',
+    'sssi',
+    'NL',
+  ],
+  [
+    'Bouw sloop begrazing nabij Natura 2000',
+    'Bouw en sloop nabij Natura 2000: AERIUS-berekening voor bouwfase (tijdelijk) en gebruiksfase (structureel). Emissiearm materieel vereist. Begrazing-intensivering: vergunning als extra ammoniakemissie significant. Maximaal vee per hectare.',
+    'sssi',
+    'NL',
+  ],
+  [
+    'Evenementen verlichting recreatie nabij Natura 2000',
+    'Evenementen (festivals, vuurwerk), recreatie-uitbreiding, en kunstmatige verlichting nabij Natura 2000 vereisen voortoets. Geluid, licht, en betreding zijn hoofdfactoren. Vleermuisvriendelijke verlichting: amberkleur, <2700K, neerwaarts gericht.',
+    'sssi',
+    'NL',
+  ],
+  [
+    'ADC-toets Alternatieven Dwingende redenen Compensatie',
+    'Als passende beoordeling significant negatief effect concludeert: vergunning alleen via ADC-toets. Geen Alternatieven, Dwingende redenen groot openbaar belang, Compenserende maatregelen voldoende. Compensatienatuur voor aanvang gerealiseerd.',
+    'sssi',
+    'NL',
+  ],
+  [
+    'Intern extern salderen stikstofdepositie',
+    'Intern salderen: nieuwe activiteit gesaldeerd met bestaande op zelfde bedrijf, geen vergunningplicht sinds 2022 maar wel melding. Extern salderen: stikstofdepositieruimte overnemen van ander bedrijf, 30% afroming, alleen feitelijk gerealiseerde capaciteit.',
+    'sssi',
+    'NL',
+  ],
+  [
+    'Soortenbescherming ontheffing gedragscode ruimtelijke ingrepen',
+    'Bij ruimtelijke ingrepen die beschermde soorten verstoren: ontheffing Wnb art. 3.3/3.5 bij RVO. Gedragscodes (Bosbeheer, Bestendig Beheer) bieden generieke vrijstelling voor specifieke werkzaamheden. Quickscan ecologie altijd verplicht.',
+    'sssi',
+    'NL',
+  ],
 
   // Rights of Way
   [
@@ -764,6 +1625,30 @@ const ftsData: [string, string, string, string][] = [
     'rights_of_way',
     'NL',
   ],
+  [
+    'Jaagpaden dijkpaden kerkepad schoolpad',
+    'Jaagpaden: historische paden langs kanalen, nu recreatief. Dijkpaden: op of langs waterkeringen, beheer waterschap. Kerkepaden: historische voetpaden naar dorpskerk, status via Wegenlegger. Schoolpaden: vergelijkbaar, veel verdwenen door ruilverkaveling.',
+    'rights_of_way',
+    'NL',
+  ],
+  [
+    'Openbaar versus privaat pad Wegenwet',
+    'Pad is openbaar als: opgenomen in Wegenlegger, 30 jaar onafgebroken openbaar, of 10 jaar openbaar met onderhoud door rechthebbende (Wegenwet art. 4). Wegenlegger is hoofdbewijs. Privaat pad wordt niet automatisch openbaar door feitelijk gebruik.',
+    'rights_of_way',
+    'NL',
+  ],
+  [
+    'Onderhoud wie betaalt verplichtingen aansprakelijkheid',
+    'Wegbeheerder (gemeente, provincie, waterschap) verantwoordelijk voor onderhoud openbare paden. Aanliggende eigenaren: overhangende takken verwijderen (art. 5:44 BW). Gebrekkig onderhoud: aansprakelijkheid wegbeheerder (art. 6:174 BW).',
+    'rights_of_way',
+    'NL',
+  ],
+  [
+    'Toegankelijkheid mobiliteit hekken overstapjes',
+    'Openbare paden moeten toegankelijk zijn. Hekken en overstapjes alleen met toestemming wegbeheerder. Minimale doorgang bij hekken: 0,9 m (rolstoeltoegankelijk). Overstapjes waar mogelijk vervangen door klaphek. VN-Verdrag rechten personen met handicap van toepassing.',
+    'rights_of_way',
+    'NL',
+  ],
 
   // Pachtrecht (Common Land)
   [
@@ -787,6 +1672,24 @@ const ftsData: [string, string, string, string][] = [
   [
     'Erfpacht zakelijk recht',
     'Erfpacht is een zakelijk recht om grond te gebruiken tegen betaling van een canon. Eeuwigdurend of langjarig. Geregistreerd bij Kadaster. Geen Grondkamer-toets. Canon periodiek herzien.',
+    'common_land',
+    'NL',
+  ],
+  [
+    'Pachtprijsgebieden 14 regio normen',
+    'De 14 pachtprijsgebieden met normen: Bouwhoek/Hogeland 800, Veenkoloniën/Oldambt 650, Noordelijk weidegebied 750, Oostelijk veehouderijgebied 700, Centraal veehouderijgebied 750, IJsselmeerpolders 900, Westelijk Holland 600, Waterland/Droogmakerijen 400, Hollandse/Utrechtse waarden 700, Rivierengebied 750, Zuidwestelijk akkerbouw 800, Zuidelijk veehouderijgebied 750, Zuid-Limburg 700, Overig Noord-Holland 650 EUR/ha.',
+    'common_land',
+    'NL',
+  ],
+  [
+    'Pachtcontract inhoud geschillen Grondkamer Pachthof',
+    'Pachtovereenkomst schriftelijk verplicht: partijen, kadastrale aanduiding, pachtprijs, duur, bestemming. Grondkamer toetst redelijke prijs en voorwaarden. Geschillen: Grondkamer (eerste aanleg), Pachthof Arnhem (hoger beroep). Tussentijdse beeindiging alleen bij wanprestatie, wederzijds goedvinden, of bestemmingswijziging.',
+    'common_land',
+    'NL',
+  ],
+  [
+    'Erfpacht canon berekening eeuwigdurend tijdelijk',
+    'Canon berekend op grondwaarde x rendementspercentage (2-5%). Eeuwigdurende erfpacht: loopt onbeperkt, canon periodiek herzien. Tijdelijke erfpacht: bepaalde duur (50 of 99 jaar), na afloop terugkeer grond. Gemeentelijke erfpacht (Amsterdam, Den Haag) kent eigen canonregels.',
     'common_land',
     'NL',
   ],
@@ -820,6 +1723,50 @@ const ftsData: [string, string, string, string][] = [
     'Agroforestry boslandbouw subsidie',
     'Agroforestry (boslandbouw) combineert bomen met landbouw op hetzelfde perceel. Subsidie via GLB eco-regelingen (circa 200-400 EUR/ha/jaar). Geen specifieke minimumomvang. Bevordert biodiversiteit en bodemkwaliteit.',
     'planting',
+    'NL',
+  ],
+  [
+    'Bossenstrategie binnen en buiten NNN',
+    'Bosaanleg binnen NNN: circa 15.000 ha, hogere subsidie (tot 7.000 EUR/ha), ecologische verbindingszones. Bosaanleg buiten NNN: circa 22.000 ha, combinatie met landbouw, langs wegen, stedelijk (tiny forests), lagere subsidie (2.000-4.000 EUR/ha).',
+    'planting',
+    'NL',
+  ],
+  [
+    'Klimaatbestendig sortiment toekomstbomen',
+    'Klimaatadaptatie soortenkeuze: wintereik (droogteresistent), zoete kers, tamme kastanje, elsbes, winterlinde. Vermijden: beuk (droogtegevoelig op zand), fijnspar (borkevergevoelig). Probos en Staatsbosbeheer publiceren sortimentsadviezen per grondsoort.',
+    'planting',
+    'NL',
+  ],
+  [
+    'Voedselbos silvopasture silvoarable agroforestry varianten',
+    'Voedselbos: meerlagig eetbaar systeem (10.000-20.000 EUR/ha aanleg). Silvopasture: bomen met begrazing, schaduw voor vee, max 100 bomen/ha. Silvoarable: bomenrijen op akkers, 25-50 m afstand. Agroforestry >50 bomen/ha telt als bos (Wnb-herplantplicht).',
+    'planting',
+    'NL',
+  ],
+  [
+    'Bosbeheer hakhout middenbos verjonging',
+    'Regulier bosbeheer: kaalkap <0,5 ha (geen meldingsplicht als herplant volgt), schermkap, groepenkap. Hakhout: periodiek afzetten (cyclus 7-25 jaar). Middenbos: hakhout + overstaanders. Gedragscode Bosbeheer: generieke vrijstelling soortenbescherming.',
+    'planting',
+    'NL',
+  ],
+  [
+    'Bosbrandpreventie risicogebieden Veluwe Brabant',
+    'Natuurbrandrisico: Veluwe, Noord-Brabant, Drenthe (zandgronden met naaldbos). Maatregelen: brandstroken 10-30 m, loofhoutstroken als brandrem, waterpunten, rookverbod april-november. Beheersubsidie via provincie voor preventieve maatregelen.',
+    'planting',
+    'NL',
+  ],
+
+  // TPO
+  [
+    'Monumentale boom werkzaamheden boomeffectanalyse',
+    'Werkzaamheden aan monumentale bomen: alleen door gecertificeerd boomverzorger (ETW/ETT). Boomeffectanalyse (BEA) vaak vereist bij kap of bouw. Waardebepaling via NVTB-methode: tot 50.000-100.000 EUR voor oude eiken of beuken.',
+    'tpo',
+    'NL',
+  ],
+  [
+    'Beschermde bomen bestemmingsplan bomenverordening',
+    'Bescherming via bestemmingsplan (groenelement/landschapselement) of aparte Bomenverordening. Wijziging vereist planherziening. Overtreding: bestuursrechtelijke handhaving, dwangsom, bestuursdwang. Boete variatie per gemeente: 5.000-25.000 EUR.',
+    'tpo',
     'NL',
   ],
 ];
@@ -866,6 +1813,12 @@ writeFileSync(
         'Staatsbosbeheer / Nationale Bossenstrategie',
         'AERIUS Calculator (stikstof)',
         'Stichting Wandelnet (klompenpaden)',
+        'Provinciale verordeningen natuur en landschap',
+        'Wegenwet (openbare paden)',
+        'ANLb (agrarisch natuur- en landschapsbeheer)',
+        'Pachtbesluit / Grondkamer / Pachthof',
+        'GLB eco-regelingen (agroforestry)',
+        'EU LULUCF-verordening',
       ],
     },
     null,
