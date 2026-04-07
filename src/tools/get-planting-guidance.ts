@@ -1,4 +1,5 @@
 import { buildMeta } from '../metadata.js';
+import { buildCitation } from '../citation.js';
 import { validateJurisdiction } from '../jurisdiction.js';
 import type { Database } from '../db.js';
 
@@ -63,5 +64,12 @@ export function handleGetPlantingGuidance(db: Database, args: PlantingArgs) {
       ancient_woodland_buffer_m: g.ancient_woodland_buffer_m,
     })),
     _meta: buildMeta({ source_url: 'https://www.rijksoverheid.nl/onderwerpen/natuur-en-biodiversiteit/bossenstrategie' }),
+    _citation: buildCitation(
+      args.tree_type ? `Planting guidance: ${args.tree_type}` : 'Planting guidance (NL)',
+      args.purpose ? `Planting guidance for ${args.purpose}` : 'Tree planting guidance',
+      'get_planting_guidance',
+      { ...(args.tree_type ? { tree_type: args.tree_type } : {}), ...(args.purpose ? { purpose: args.purpose } : {}) },
+      'https://www.rijksoverheid.nl/onderwerpen/natuur-en-biodiversiteit/bossenstrategie',
+    ),
   };
 }

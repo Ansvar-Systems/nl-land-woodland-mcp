@@ -1,4 +1,5 @@
 import { buildMeta } from '../metadata.js';
+import { buildCitation } from '../citation.js';
 import { validateJurisdiction } from '../jurisdiction.js';
 import type { Database } from '../db.js';
 
@@ -47,5 +48,12 @@ export function handleGetTPORules(db: Database, args: TPOArgs) {
       regulation_ref: r.regulation_ref,
     })),
     _meta: buildMeta({ source_url: 'https://lokaleregelgeving.overheid.nl' }),
+    _citation: buildCitation(
+      args.scenario ? `TPO rules: ${args.scenario}` : 'Tree preservation order rules (NL)',
+      args.scenario ? `TPO rules for ${args.scenario}` : 'Tree preservation order rules',
+      'get_tpo_rules',
+      { ...(args.scenario ? { scenario: args.scenario } : {}) },
+      'https://lokaleregelgeving.overheid.nl',
+    ),
   };
 }

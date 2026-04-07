@@ -1,4 +1,5 @@
 import { buildMeta } from '../metadata.js';
+import { buildCitation } from '../citation.js';
 import { validateJurisdiction } from '../jurisdiction.js';
 import type { Database } from '../db.js';
 
@@ -41,5 +42,12 @@ export function handleGetCommonLandRules(db: Database, args: CommonLandArgs) {
       process: r.process,
     })),
     _meta: buildMeta({ source_url: 'https://www.rvo.nl/onderwerpen/pacht' }),
+    _citation: buildCitation(
+      args.activity ? `Common land: ${args.activity}` : 'Common land rules (NL)',
+      args.activity ? `Common land rules for ${args.activity}` : 'Common land rules',
+      'get_common_land_rules',
+      { ...(args.activity ? { activity: args.activity } : {}) },
+      'https://www.rvo.nl/onderwerpen/pacht',
+    ),
   };
 }
