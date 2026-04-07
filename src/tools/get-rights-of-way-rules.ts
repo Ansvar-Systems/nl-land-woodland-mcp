@@ -1,4 +1,5 @@
 import { buildMeta } from '../metadata.js';
+import { buildCitation } from '../citation.js';
 import { validateJurisdiction } from '../jurisdiction.js';
 import type { Database } from '../db.js';
 
@@ -54,5 +55,12 @@ export function handleGetRightsOfWayRules(db: Database, args: RoWArgs) {
       obstruction_liability: r.obstruction_liability,
     })),
     _meta: buildMeta({ source_url: 'https://wetten.overheid.nl/BWBR0001948' }),
+    _citation: buildCitation(
+      args.path_type ? `Rights of way: ${args.path_type}` : 'Rights of way rules (NL)',
+      args.issue ? `Rights of way rules: ${args.issue}` : 'Rights of way rules',
+      'get_rights_of_way_rules',
+      { ...(args.path_type ? { path_type: args.path_type } : {}), ...(args.issue ? { issue: args.issue } : {}) },
+      'https://wetten.overheid.nl/BWBR0001948',
+    ),
   };
 }
